@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# ADR-0007: gate determinístico. Enriquecimento LLM é adiada (capturar-humano).
+set -euo pipefail
+
+TOUCHED=".context/touched"
+PENDING=".context/pending-human.md"
+STAGED=$(git diff --cached --name-only)
+
+[ -z "$STAGED" ] && exit 0
+
+if [ -f "$TOUCHED" ]; then
+  # LC_ALL=C: comm compara em ordem de byte; sort por locale diverge dela
+  DIVERGENT=$(LC_ALL=C comm -23 \
+    <(echo "$STAGED" | LC_ALL=C sort) \
+    <(LC_ALL=C sort -u "$TOUCHED"))
+else
+  DIVERGENT="$STAGED"
+fi
+
+if [ -n "$DIVERGENT" ]; then
+  if [ -f "$PENDING" ] && grep -q '^porque: .+' "$PENDING"; then
+    exit 0   # porquê presente; capturar-humano expande na próxima sessão
+  fi
+  echo "✋ Fora do fluxo do agente:"
+  echo "$DIVERGENT"
+  echo ""
+  echo "Preencha .context/pending-human.md:"
+  echo "  porque:   <por que você alterou>"
+  echo "  conceito: <a ideia por trás>"
+  exit 1
+fi
+
+exit 0
