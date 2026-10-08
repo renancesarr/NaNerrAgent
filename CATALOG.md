@@ -20,3 +20,4 @@ Skills são autodocumentadas — o SKILL.md de cada uma é a sua doc de contexto
 | hooks/pre-commit | gate determinístico: divergência staged×touched exige porquê (ADR-0007) |
 | ADR-CATALOG.md | índice das decisões ADR-0001 a ADR-0010 |
 | IMPLEMENTS-CATALOG.md | vazio no bootstrap — meta-repo sem dialeto próprio |
+| BACKLOGS/001-estrutura-goal.md | backlog: pasta goal/ com árvore macro/micro — implementação futura |

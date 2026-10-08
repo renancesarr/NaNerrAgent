@@ -1,25 +1,25 @@
 # NOW
-objetivo: bootstrap funcional do meta-repo do agente
-etapa: concluída (LOG 002)
-passo: bootstrap fechado / próxima task real pendente
+objetivo: backlog da estrutura goal/ registrado
+etapa: concluída (LOG 003)
+passo: BACKLOGS/001 criado e catalogado
 status: concluído
 
 ## Entendimento atual
-Sistema materializado e VALIDADO: 9 skills nucleares, AGENTS.md como lei,
-catálogos preenchidos, ADR-0001 exemplo + 0010 indexadas, gate pre-commit
-ativo (core.hooksPath=hooks) e testado nas 3 vias, 9 skills visíveis ao
-ZCode via symlink. Git no main, 3 commits, tree limpa.
+Sistema materializado e validado (LOG 002): 9 skills, gate testado nas 3
+vias, 9 skills no ZCode via symlink. Backlog novo descreve a futura pasta
+goal/ (goal → macro → micro) como casa persistente das specs de decompor.
 
 ## Decisões que mudam o futuro
-- Gate validado: comm exige LC_ALL=C; porque exige grep -E (BRE mata '.+')
-- .zcode/ ignorado: artefato de harness, não unidade do repo
-- DELTA_VERSION.md intacto por decisão do usuário (registro histórico)
-- ADRs completas em arquivo: só a 0001; resto vive no ADR-CATALOG
-- Instalação: ZCode feito (symlink); Codex e OpenCode ainda não
+- Estrutura goal/ = implementação futura: proposta original preservada +
+  v2 melhorada (NNN-slug em todo nível, micro=arquivo, frontmatter status)
+  em BACKLOGS/001; aberturas a decidir na implementação
+- Gate validado: comm exige LC_ALL=C; porque exige grep -E
+- .zcode/ ignorado; DELTA_VERSION.md intacto (decisão do usuário)
+- Instalação: ZCode feito; Codex e OpenCode ainda não
 
 ## Próximo passo imediato
-Primeira task real usando o sistema (conter → …) num repo-alvo; ela gera
-as cicatrizes que validam ou corrigem o modelo (IDEIA, "Como saber que funciona").
+Primeira task real usando o sistema num repo-alvo (ou implementar
+BACKLOGS/001, se o usuário preferir começar por ela).
 
 ## Bloqueios
 —
