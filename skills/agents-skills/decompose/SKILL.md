@@ -26,6 +26,13 @@ and pointers; the NOW points at the active micro's path. Specs evolve
 (criteria checked, adjustments) — that is why they live in goal/, not in
 the append-only LOG (ADR-0012).
 
+## Single home for objectives (ADR-0013)
+Objectives are minted ONLY into goal/. A vision doc (IDEA.md, README) is
+optional context — problem, mechanisms, metrics, non-goals — and NEVER a
+second objective list: if it states objectives, extract them into goal/
+and leave the vision behind. Neither artifact requires the other; when
+objectives exist, goals are the authority.
+
 ## Structure
 - **goal** — the persistent objective (was "checkpoint"; renamed by
   ADR-0012): a folder `goal/NNN-slug/` with GOAL.md. Survives sessions.
