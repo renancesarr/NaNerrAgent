@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ADR-0007: gate determinístico. Enriquecimento LLM é adiada (capturar-humano).
+# ADR-0007: deterministic gate. LLM enrichment is deferred (capture-human).
 set -euo pipefail
 
 TOUCHED=".context/touched"
@@ -9,7 +9,7 @@ STAGED=$(git diff --cached --name-only)
 [ -z "$STAGED" ] && exit 0
 
 if [ -f "$TOUCHED" ]; then
-  # LC_ALL=C: comm compara em ordem de byte; sort por locale diverge dela
+  # LC_ALL=C: comm compares in byte order; locale sort diverges from it
   DIVERGENT=$(LC_ALL=C comm -23 \
     <(echo "$STAGED" | LC_ALL=C sort) \
     <(LC_ALL=C sort -u "$TOUCHED"))
@@ -18,16 +18,16 @@ else
 fi
 
 if [ -n "$DIVERGENT" ]; then
-  # -E: em BRE o '+' é literal e '.+' nunca casa (bug achado no 1º dogfood)
-  if [ -f "$PENDING" ] && grep -Eq '^porque: .+' "$PENDING"; then
-    exit 0   # porquê presente; capturar-humano expande na próxima sessão
+  # -E: in BRE '+' is literal and '.+' never matches (bug found in 1st dogfood)
+  if [ -f "$PENDING" ] && grep -Eq '^because: .+' "$PENDING"; then
+    exit 0   # why present; capture-human expands it in the next session
   fi
-  echo "✋ Fora do fluxo do agente:"
+  echo "✋ Out of the agent's flow:"
   echo "$DIVERGENT"
   echo ""
-  echo "Preencha .context/pending-human.md:"
-  echo "  porque:   <por que você alterou>"
-  echo "  conceito: <a ideia por trás>"
+  echo "Fill .context/pending-human.md:"
+  echo "  because:  <why you changed it>"
+  echo "  concept:  <the idea behind it>"
   exit 1
 fi
 

@@ -1,26 +1,29 @@
 # NOW
-objetivo: instalador v2 — merge de AGENTS.md + anonimato de alvos
-etapa: concluída (LOG 012)
-passo: 18/18 PASS; LOG 011 sanitizado; política em ADR-0011 emenda 1
-status: concluído
+objective: full English conversion of the system
+stage: done (LOG 013)
+step: converted; cross-verification to dev-ai pending
+status: done
 
-## Entendimento atual
-Instalador lida nativamente com AGENTS.md existente (preserva verbatim no
-final, guard anti-duplicação). Política permanente: meta-repo NÃO conhece
-projetos-alvo — registros dizem só "instalação funcionou". Sistema roda
-em ≥1 projeto real.
+## Current understanding
+The whole living system is English: laws (AGENTS.md), 9 skills renamed
+(clarify, decompose, model-domain, catalog, implement, verify-objective,
+contain, capture-human, audit), installer v3 with English templates,
+gate fields because:/concept:, IDEA.md + DELTA_VERSION.md translated.
+ZCode symlinks swapped to the new names. LOG history 001–012 and the
+parallel audit report stay Portuguese (authentic records).
 
-## Decisões que mudam o futuro
-- AGENTS.md existente no alvo = preservado verbatim no final (ADR-0011e1)
-- Meta-repo não registra identidade de alvos (path/stack/dados); LOG 011
-  reescrito como exceção autorizada ao append-only (documentada no 012)
-- contencao: re-install não renova AGENTS.md já mergeado
-- Pendências: achados 1–2 da auditoria; BACKLOGS/001 (goal/); resto do
-  002 (hook de branch, claim, AGENTS); verificação cruzada do instalador
-  p/ dev-ai (LOG 010+012 são o insumo do verificador)
+## Decisions that change the future
+- Language = English everywhere installed and lived-in; new LOG entries
+  in English from 014 on
+- Pending fields: because:/concept: (hook + capture-human + templates in sync)
+- ZCode symlinks now point at the English-named skill dirs
+- Pending: audit findings 1–2; BACKLOGS/001 (goal/); rest of 002;
+  cross-verification of installer + English conversion to dev-ai
+  (LOG 010/012/013 are the verifier's input)
 
-## Próximo passo imediato
-Decidir achados 1–2 da auditoria — ou implementar BACKLOGS/001.
+## Immediate next step
+User picks: fix audit findings 1–2, implement BACKLOGS/001, or first real
+task in a target project (English end-to-end now).
 
-## Bloqueios
+## Blockers
 —

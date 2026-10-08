@@ -1,40 +1,40 @@
-Dogfood. O que isso implica em três pontos, antes dos artefatos:
+Dogfooding. What this implies, in three points, before the artifacts:
 
-1. **Esta conversa inteira foi a etapa `clarificar` + `modelar`** — logo, ela vira a primeira entrada do LOG e as decisões que fechamos viram os ADRs-0001 a 0010 do meta-repo
-2. **Cada skill é uma unidade coesa** — logo, o próprio CATALOG.md do repo cataloga as 9 skills que o compõem
-3. **A primeira execução real do NOW.md já existe** — refletindo exatamente onde estamos: artefatos de bootstrap criados, próxima etapa = instalação e primeira task real
+1. **This entire conversation was the `clarify` + `model` step** — so it becomes the first LOG entry and the decisions we closed become ADRs 0001 through 0010 of the meta-repo
+2. **Each skill is a cohesive unit** — so the repo's own CATALOG.md catalogs the 9 skills that compose it
+3. **The first real execution of NOW.md already exists** — reflecting exactly where we are: bootstrap artifacts created, next step = installation and first real task
 
-E aplicando `conter` a esta resposta em si: cada skill fica entre 70–90 linhas, o protocolo context-now é definido **uma vez** no AGENTS.md e apenas referenciado nas skills (DRY), e os ADRs ficam em catálogo + 1 exemplo completo.
+And applying `contain` to this very response: each skill stays between 70–90 lines, the context-now protocol is defined **once** in AGENTS.md and merely referenced in the skills (DRY), and the ADRs live in a catalog + 1 complete example.
 
-## Estrutura do Repo
+## Repo Structure
 
 ```
 .
-├── AGENTS.md                    # as leis. carregado sempre. ~130 linhas
-├── CATALOG.md                   # catálogo das unidades (as 9 skills)
-├── ADR-CATALOG.md               # índice das decisões
-├── IMPLEMENTS-CATALOG.md        # vazio no bootstrap — o meta-repo não tem dialeto ainda
+├── AGENTS.md                    # the laws. always loaded. ~130 lines
+├── CATALOG.md                   # catalog of units (the 9 skills)
+├── ADR-CATALOG.md               # index of decisions
+├── IMPLEMENTS-CATALOG.md        # empty at bootstrap — the meta-repo has no dialect yet
 ├── docs/adr/
-│   ├── 0001-unidade-coesa.md    # exemplo completo; 0002–0010 seguem o template
+│   ├── 0001-cohesive-unit.md    # complete example; 0002–0010 follow the template
 │   └── ...
 ├── skills/
-│   ├── clarificar/SKILL.md
-│   ├── decompor/SKILL.md
-│   ├── modelar-dominio/SKILL.md
-│   ├── catalogar/SKILL.md
-│   ├── implementar/SKILL.md
-│   ├── verificar-objetivo/SKILL.md
-│   ├── conter/SKILL.md
-│   ├── capturar-humano/SKILL.md
-│   └── auditar/SKILL.md
+│   ├── clarify/SKILL.md
+│   ├── decompose/SKILL.md
+│   ├── model-domain/SKILL.md
+│   ├── catalog/SKILL.md
+│   ├── implement/SKILL.md
+│   ├── verify-objective/SKILL.md
+│   ├── contain/SKILL.md
+│   ├── capture-human/SKILL.md
+│   └── audit/SKILL.md
 ├── hooks/
-│   └── pre-commit               # gate determinístico
+│   └── pre-commit               # deterministic gate
 └── .context/
-    ├── NOW.md                   # snapshot atual
-    ├── touched                  # arquivos declarados pelo agente (o hook lê)
-    ├── pending-human.md         # template do porquê humano
+    ├── NOW.md                   # current snapshot
+    ├── touched                  # files declared by the agent (the hook reads it)
+    ├── pending-human.md         # template for the human rationale
     └── log/
-        └── 001-clarificar.md    # esta conversa
+        └── 001-clarify.md       # this conversation
 ```
 
 ---
@@ -42,587 +42,587 @@ E aplicando `conter` a esta resposta em si: cada skill fica entre 70–90 linhas
 ## AGENTS.md
 
 ````markdown
-# AGENTS.md — Agente de Desenvolvimento com Contexto Persistente
+# AGENTS.md — Development Agent with Persistent Context
 
-Você trabalha com estado fora da conversa: catálogos indexam o que existe,
-ADRs registram por que existe, NOW/LOG registram onde a execução está.
-Nada de importante vive só na sua memória de sessão.
+You work with state outside the conversation: catalogs index what exists,
+ADRs record why it exists, NOW/LOG record where execution stands.
+Nothing important lives only in your session memory.
 
-## 1. Leis
+## 1. Laws
 
-1. **Unidade coesa**: um arquivo = um conceito = um motivo para mudar.
-   Se não consegue nomear o arquivo com o nome do único conceito dele, ele faz coisa demais. Guia: 50–150 linhas.
-2. **DRY**: cada conhecimento tem UMA representação autoritativa. Catálogo aponta; não duplica.
-3. **KISS / YAGNI**: implemente quando precisar, nunca quando prevê que vai precisar. Sem abstração não pedida, sem dependência nova evitável, stdlib antes de custom.
-4. **SOLID traduzido**: um motivo para mudar (S) · variantes novas sem tocar consumidores (O) · contratos honrados (L) · interfaces pequenas (I) · dependências passadas, não globais (D).
-5. **Documentação obrigatória**: toda unidade tem seu `.md` de contexto. Unidade sem doc ou doc sem unidade = commit bloqueado.
-6. **Bug = causa raiz**: grep todo caller antes de tocar. Patch no sintoma deixa o irmão quebrado.
+1. **Cohesive unit**: one file = one concept = one reason to change.
+   If you cannot name the file after its single concept, it does too much. Guide: 50–150 lines.
+2. **DRY**: every piece of knowledge has ONE authoritative representation. The catalog points; it does not duplicate.
+3. **KISS / YAGNI**: implement when you need it, never when you foresee needing it. No unrequested abstraction, no avoidable new dependency, stdlib before custom.
+4. **SOLID translated**: one reason to change (S) · new variants without touching consumers (O) · honored contracts (L) · small interfaces (I) · dependencies passed in, not globals (D).
+5. **Mandatory documentation**: every unit has its context `.md`. Unit without doc or doc without unit = commit blocked.
+6. **Bug = root cause**: grep every caller before touching. Patching the symptom leaves the sibling broken.
 
-## 2. Skills — taxonomia e visibilidade
+## 2. Skills — taxonomy and visibility
 
-| Camada | Quem conhece | Exemplo |
+| Layer | Who knows it | Example |
 |---|---|---|
-| `agent-skills/` (9) | sempre carregadas | clarificar, decompor, modelar-dominio, catalogar, implementar, verificar-objetivo, conter, capturar-humano, auditar |
-| `implements-skills/` | **só `implementar`**, via IMPLEMENTS-CATALOG.md | testar-rust, padroes-api-go |
-| `platform-skills/` | só quando a task é de deploy | vercel, cloudflare |
+| `agent-skills/` (9) | always loaded | clarify, decompose, model-domain, catalog, implement, verify-objective, contain, capture-human, audit |
+| `implements-skills/` | **only `implement`**, via IMPLEMENTS-CATALOG.md | rust-testing, go-api-patterns |
+| `platform-skills/` | only when the task is deployment | vercel, cloudflare |
 
-**Lei da visibilidade**: `implementar` é a ÚNICA porta para implements-skills.
-AGENTS.md não conhece nenhuma. Seleção registrada no LOG com justificativa.
+**Law of visibility**: `implement` is the ONLY gateway to implements-skills.
+AGENTS.md knows none of them. Selection is recorded in the LOG with justification.
 
-**Critério de classificação**: sobrevive a um repo vazio → agent-skill.
-Precisa de código para existir → implements-skill.
+**Classification criterion**: survives an empty repo → agent-skill.
+Needs code to exist → implements-skill.
 
-## 3. Pipeline com fast path
+## 3. Pipeline with fast path
 
-Classifique ANTES de executar (`conter`):
+Classify BEFORE executing (`contain`):
 
-| Classe | Critério | Caminho |
+| Class | Criterion | Path |
 |---|---|---|
-| trivial | diff < 10 linhas, sem mudança de contrato | diff mínimo, 1 entrada de LOG, ponto |
-| média | uma unidade ou uma task | clarificação leve → task → verificação |
-| grande | muda entendimento ou várias unidades | pipeline completo |
+| trivial | diff < 10 lines, no contract change | minimal diff, 1 LOG entry, done |
+| medium | one unit or one task | light clarify → task → verification |
+| large | changes understanding or multiple units | full pipeline |
 
-Pipeline completo: `clarificar` → `decompor` → (`modelar-dominio` se houver decisão) → `implementar` → `verificar-objetivo`. Toda etapa termina com registro context-now (§5). Sem exceção.
+Full pipeline: `clarify` → `decompose` → (`model-domain` if there is a decision) → `implement` → `verify-objective`. Every step ends with a context-now record (§5). No exceptions.
 
-## 4. Verificação — QA-first
+## 4. Verification — QA-first
 
-O **teste do objetivo** é o gate: como um QA testaria? Comportamento, integração, aceitação. A forma varia por projeto (declareda em implements-skills); a exigência é fixa.
+The **objective test** is the gate: how would a QA test it? Behavior, integration, acceptance. The form varies per project (declared in implements-skills); the requirement is fixed.
 
-Unitário segue TDD à risca, mas é higiene interna.
-PR com unitário verde e objetivo quebrado = REPROVADO.
-Entrega exige evidência executável, nunca afirmação.
+Unit tests follow TDD to the letter, but are internal hygiene.
+A PR with green unit tests and a broken objective = REJECTED.
+Delivery requires executable evidence, never assertion.
 
-## 5. Protocolo context-now
+## 5. context-now protocol
 
 ```
 .context/
-├── NOW.md      # snapshot, reescrito a cada transição, teto 100 linhas
-└── log/NNN-*.md  # append-only, nunca reescreve o passado
+├── NOW.md      # snapshot, rewritten at every transition, cap of 100 lines
+└── log/NNN-*.md  # append-only, never rewrites the past
 ```
 
-**Escrita é obrigatória e sempre** (via tool de arquivo — não polui a janela).
-**Leitura é sob demanda, em 3 gatilhos**: (1) cold start com NOW em-progresso;
-(2) pós-compaction ou quando a confiança no estado cair; (3) auditoria/rota, via catálogo de objetivos.
+**Writing is mandatory and always** (via the file tool — don't pollute the window).
+**Reading is on demand, with 3 triggers**: (1) cold start with NOW in-progress;
+(2) post-compaction or when confidence in the state drops; (3) audit/routing, via the objectives catalog.
 
-**Regra de linha**: entra no NOW se, e somente se, muda uma decisão futura.
+**Line rule**: enters the NOW if, and only if, it changes a future decision.
 
-**Teto do NOW = instrumento de diagnóstico**: estourou 100 linhas → a decomposição falhou, volte uma etapa. Não escreva um NOW maior.
+**The NOW cap = diagnostic instrument**: over 100 lines → decomposition failed, step back one stage. Don't write a bigger NOW.
 
-**Retomada**: ler NOW → última entrada do LOG → conferir contra `git status` e artefatos reais. Divergência → re-validar a etapa, nunca retomar cego.
+**Resuming**: read the NOW → latest LOG entry → check against `git status` and real artifacts. Divergence → re-validate the step, never resume blindly.
 
-## 6. Commits e edições humanas
+## 6. Commits and human edits
 
-- Commit que toca unidade toca (ou declara inalterada) a doc dela e as ADRs vinculadas, no mesmo commit.
-- O hook `hooks/pre-commit` compara staged vs `.context/touched`. Divergência exige `.context/pending-human.md` preenchido (porquê + conceito). Sem isso, commit bloqueado.
-- Na próxima sessão, `capturar-humano` expande o pending em entrada completa do LOG.
+- A commit that touches a unit also touches (or declares unchanged) its doc and the linked ADRs, in the same commit.
+- The `hooks/pre-commit` hook compares staged vs `.context/touched`. Divergence requires a filled `.context/pending-human.md` (because + concept). Without it, the commit is blocked.
+- In the next session, `capture-human` expands the pending file into a full LOG entry.
 
-## 7. Fast path do trivial
+## 7. Fast path for the trivial
 
-Typo, cor, renome local, lockfile: diff mínimo, uma linha no LOG, sem cerimônia.
-Burocracia em tarefa trivial é o jeito mais rápido de ódio ao processo.
+Typo, color, local rename, lockfile: minimal diff, one LOG line, no ceremony.
+Bureaucracy in a trivial task is the fastest way to hate the process.
 ````
 
 ---
 
-## As 9 Skills
+## The 9 Skills
 
-### skills/clarificar/SKILL.md
+### skills/clarify/SKILL.md
 
 ````markdown
 ---
-name: clarificar
+name: clarify
 description: >
-  Analisa o prompt antes de qualquer execução. Detecta ambiguidades e sugere
-  3 opções de ajuste por ambiguidade. Usar ao receber qualquer task nova
-  classificada como média ou grande. Não usar em triviais (ver conter).
+  Analyzes the prompt before any execution. Detects ambiguities and suggests
+  3 adjustment options per ambiguity. Use when receiving any new task
+  classified as medium or large. Do not use for trivia (see contain).
 ---
 
-# clarificar
+# clarify
 
-## Objetivo
-Garantir que o problema está entendido antes de existir código errado.
+## Objective
+Ensure the problem is understood before wrong code exists.
 
-## Processo
-1. Leia o prompt. Extraia: objetivo principal, requisitos explícitos, requisitos implícitos.
-2. Detecte ambiguidades: termos vagos, escopo indefinido, métrica de sucesso ausente, requisitos conflitantes.
-3. Para CADA ambiguidade, gere 3 opções:
-   - **conservadora** — interpretação mais restrita
-   - **balanceada** — intermediária
-   - **abrangente** — mais ampla
-4. Apresente objetivo identificado + ambiguidades + opções + sua recomendação (uma por ambiguidade).
-5. Aguarde escolha. Reescreva o prompt com as escolhas incorporadas.
-6. Terminou: registra transição (AGENTS.md §5). Campos específicos no LOG:
-   `prompt-original`, `prompt-clarificado`, `ambiguidades + opções escolhidas`.
+## Process
+1. Read the prompt. Extract: main objective, explicit requirements, implicit requirements.
+2. Detect ambiguities: vague terms, undefined scope, missing success metric, conflicting requirements.
+3. For EACH ambiguity, generate 3 options:
+   - **conservative** — narrowest interpretation
+   - **balanced** — intermediate
+   - **comprehensive** — broadest
+4. Present identified objective + ambiguities + options + your recommendation (one per ambiguity).
+5. Wait for the choice. Rewrite the prompt with the choices incorporated.
+6. Done: record the transition (AGENTS.md §5). Specific fields in the LOG:
+   `original-prompt`, `clarified-prompt`, `ambiguities + chosen options`.
 
-## Anti-racionalização
-| Desculpa | Resposta |
+## Anti-rationalization
+| Excuse | Response |
 |---|---|
-| "Está claro o suficiente" | Consegue formular 2 interpretações? Então não está. |
-| "Pergunto no meio se precisar" | Dúvida no meio custa retrabalho; dúvida agora custa uma mensagem. |
-| "O usuário vai achar chato" | 3 opções numeradas respondem-se com um dígito. |
+| "It's clear enough" | Can you formulate 2 interpretations? Then it isn't. |
+| "I'll ask mid-way if needed" | Doubt mid-way costs rework; doubt now costs one message. |
+| "The user will find it annoying" | 3 numbered options are answered with one digit. |
 
-## Verificação
-Prompt reescrito validado pelo usuário (resposta explícita, não silêncio).
-Zero ambiguidades restantes listáveis.
+## Verification
+Rewritten prompt validated by the user (explicit response, not silence).
+Zero listable ambiguities remaining.
 ````
 
-### skills/decompor/SKILL.md
+### skills/decompose/SKILL.md
 
 ````markdown
 ---
-name: decompor
+name: decompose
 description: >
-  Divide objetivo clarificado em checkpoint → macro-objetivo → micro-objetivo.
-  Cada micro vira uma task com especificação e critério verificável.
-  Usar após clarificar em tasks médias/grandes.
+  Divides the clarified objective into checkpoint → macro-objective → micro-objective.
+  Each micro becomes a task with a specification and a verifiable criterion.
+  Use after clarify on medium/large tasks.
 ---
 
-# decompor
+# decompose
 
-## Objetivo
-Nenhuma task maior que uma sessão. Nenhum NOW que estoure o teto.
+## Objective
+No task bigger than one session. No NOW that bursts the cap.
 
-## Estrutura
-- **checkpoint** — macro-entregável (semanas)
-- **macro-objetivo** — componente do checkpoint (1–2 semanas)
-- **micro-objetivo** — task atômica (horas, uma sessão, um passo do NOW)
+## Structure
+- **checkpoint** — macro deliverable (weeks)
+- **macro-objective** — component of the checkpoint (1–2 weeks)
+- **micro-objective** — atomic task (hours, one session, one step of the NOW)
 
-## Processo
-1. Do prompt clarificado, liste os checkpoints.
-2. Quebre cada checkpoint em macro-objetivos.
-3. Quebre cada macro em micros. Para cada micro, escreva a spec:
+## Process
+1. From the clarified prompt, list the checkpoints.
+2. Break each checkpoint into macro-objectives.
+3. Break each macro into micros. For each micro, write the spec:
 
 ```markdown
-# [nome do micro]
-objetivo: [1–2 linhas]
-critérios: [ ] ... [ ] ...        ← verificáveis de forma independente
-dependências: [micros anteriores ou —]
-unidades: [arquivos a criar/alterar, se conhecidos]
-teste do objetivo: [como um QA validaria ESTE micro]
+# [micro name]
+objective: [1–2 lines]
+criteria: [ ] ... [ ] ...        ← independently verifiable
+dependencies: [previous micros or —]
+units: [files to create/modify, if known]
+objective test: [how a QA would validate THIS micro]
 ```
 
-4. Priorize: valor primeiro, risco cedo, dependências respeitadas.
-5. Terminou: registra transição. LOG recebe: `checkpoints`, `macros`, `specs dos micros` (ou apontamento para onde foram salvas). NOW recebe o primeiro micro como "próximo passo imediato".
+4. Prioritize: value first, risk early, dependencies respected.
+5. Done: record the transition. The LOG receives: `checkpoints`, `macros`, `micro specs` (or a pointer to where they were saved). The NOW receives the first micro as the "immediate next step".
 
-## Anti-racionalização
-| Desculpa | Resposta |
+## Anti-rationalization
+| Excuse | Response |
 |---|---|
-| "É simples, vou direto" | Simples não precisa de decomposição — reclassifique como trivial via `conter`. |
-| "Decompo conforme avança" | Cada fronteira movida no meio custa re-trabalho em tudo que já encostou nela. |
+| "It's simple, I'll go straight in" | Simple doesn't need decomposition — reclassify as trivial via `contain`. |
+| "I'll decompose as I go" | Every boundary moved mid-way costs rework on everything that has already touched it. |
 
-## Verificação
-Cada micro tem critério verificável sem depender de outro micro.
-Contagem de micros × tamanho estimado não estoura o teto do NOW quando descritos.
+## Verification
+Each micro has a verifiable criterion without depending on another micro.
+The count of micros × estimated size does not burst the NOW cap when described.
 ````
 
-### skills/modelar-dominio/SKILL.md
+### skills/model-domain/SKILL.md
 
 ````markdown
 ---
-name: modelar-dominio
+name: model-domain
 description: >
-  Mantém o glossário (linguagem ubíqua) e as ADRs do projeto.
-  ADR = decisão com trade-off duradouro, nada menos.
-  Usar quando uma task muda uma decisão de domínio ou introduz termo novo.
+  Maintains the glossary (ubiquitous language) and the project's ADRs.
+  An ADR = a decision with a lasting trade-off, nothing less.
+  Use when a task changes a domain decision or introduces a new term.
 ---
 
-# modelar-dominio
+# model-domain
 
-## Objetivo
-Termo significa uma coisa só. Decisão com trade-off tem endereço.
+## Objective
+A term means exactly one thing. A decision with a trade-off has an address.
 
-## Regra de granularidade (a mais importante desta skill)
-- **ADR**: decisão de domínio com trade-off duradouro (escolha entre alternativas com consequência).
-- **Comentário no código / linha no doc da unidade**: micro-decisão técnica.
-- Se você tem 40 ADRs num sistema pequeno, alguém está documentando não-decisões.
+## Granularity rule (the most important in this skill)
+- **ADR**: domain decision with a lasting trade-off (a choice among alternatives with consequence).
+- **Code comment / line in the unit's doc**: technical micro-decision.
+- If you have 40 ADRs in a small system, someone is documenting non-decisions.
 
-## Processo — glossário
-1. Termo novo ou usado de forma inconsistente? Uma entrada em GLOSSARY.md:
-   `**termo** — definição em uma linha.`
-2. Termo não usado em lugar nenhum do código/doc? Marque órfão, proponha remoção.
+## Process — glossary
+1. New term or inconsistently used term? One entry in GLOSSARY.md:
+   `**term** — one-line definition.`
+2. Term not used anywhere in code/docs? Mark it as orphaned, propose removal.
 
-## Processo — ADR
-1. Detectou decisão com trade-off? Crie `docs/adr/NNN-slug.md`:
+## Process — ADR
+1. Detected a decision with a trade-off? Create `docs/adr/NNN-slug.md`:
 ```markdown
 ---
 id: NNN
-status: aceita
+status: accepted
 supersedes: —
-unidades: [caminhos das unidades que a sustentam]
+units: [paths of the units that uphold it]
 ---
-# [decisão em uma frase]
-## contexto
-[que pressão motivou]
-## alternativas
-[as consideradas, com contra]
-## consequências
-[o que ganhamos, o que abrimos mão]
+# [decision in one sentence]
+## context
+[what pressure motivated it]
+## alternatives
+[those considered, with the con]
+## consequences
+[what we gain, what we give up]
 ```
-2. Adicione a linha no ADR-CATALOG.md.
-3. Vínculo bidirecional: a ADR lista `unidades`; cada unidade lista `decisions` no frontmatter do seu `.md` (`catalogar` cuida do outro lado).
-4. Terminou: registra transição. LOG: `ADR criada/emendada + por quê`.
+2. Add the line to ADR-CATALOG.md.
+3. Bidirectional link: the ADR lists `units`; each unit lists `decisions` in the frontmatter of its `.md` (`catalog` handles the other side).
+4. Done: record the transition. LOG: `ADR created/amended + why`.
 
-## DDD-lite — onde para
-Sim: linguagem ubíqua, decisões rastreáveis, fronteiras por domínio.
-Não: bounded contexts formais, agregados, cerimônia. CRUD é CRUD.
+## DDD-lite — where to stop
+Yes: ubiquitous language, traceable decisions, boundaries by domain.
+No: formal bounded contexts, aggregates, ceremony. CRUD is CRUD.
 
-## Anti-racionalização
-| Desculpa | Resposta |
+## Anti-rationalization
+| Excuse | Response |
 |---|---|
-| "Decido e documento depois" | Depois nunca chega; a decisão vira arqueologia no próximo bug. |
-| "É detalhe técnico, não ADR" | Então é comentário no código. Confirme a granularidade, não pule o registro. |
+| "I'll decide and document later" | Later never comes; the decision becomes archaeology in the next bug. |
+| "It's a technical detail, not an ADR" | Then it's a code comment. Confirm the granularity, don't skip the record. |
 
-## Verificação
-ADR sem campo `alternativas` = inválida.
-Termo do glossário usado com 2 significados no código = falha desta skill.
+## Verification
+An ADR without the `alternatives` field is invalid.
+A glossary term used with 2 meanings in the code = this skill failed.
 ````
 
-### skills/catalogar/SKILL.md
+### skills/catalog/SKILL.md
 
 ````markdown
 ---
-name: catalogar
+name: catalog
 description: >
-  Mantém CATALOG.md (índice de unidades) e o .md de contexto de cada unidade,
-  com vínculo bidirecional às ADRs. Usar ao criar/alterar qualquer unidade.
+  Maintains CATALOG.md (index of units) and each unit's context .md,
+  with a bidirectional link to ADRs. Use when creating/changing any unit.
 ---
 
-# catalogar
+# catalog
 
-## Objetivo
-O agente descobre o que existe lendo um índice, não o código inteiro.
+## Objective
+The agent discovers what exists by reading an index, not the entire codebase.
 
-## Processo
-1. Unidade nova (ou alterada) → o `.md` ao lado dela:
+## Process
+1. New (or changed) unit → the `.md` next to it:
 
 ```markdown
 ---
-unidade: caminho/arquivo.ext
+unit: path/file.ext
 decisions: [ADR-NNN, ...]
-última-sincronia: <hash do commit>
+last-sync: <commit hash>
 ---
-# [nome]
-responsabilidade: [1–2 frases]
-interface: [o que é público, assinatura mínima]
-dependências: [unidades e ADRs]
-exemplo: [uso mínimo real]
-notas: [o que o próximo leitor precisa saber e não vê na assinatura]
+# [name]
+responsibility: [1–2 sentences]
+interface: [what is public, minimal signature]
+dependencies: [units and ADRs]
+example: [minimal real usage]
+notes: [what the next reader needs to know and cannot see from the signature]
 ```
 
-2. Uma linha no CATALOG.md: `| caminho | responsabilidade em 1 linha |`
-3. Vínculo ADR: frontmatter `decisions` ↔ campo `unidades` da ADR.
-4. Alterou a unidade sem mudar contrato? Atualize `última-sincronia`, declare "contrato inalterado".
-5. Terminou: registra transição. LOG: `unidades tocadas + docs correspondentes`.
+2. One line in CATALOG.md: `| path | responsibility in 1 line |`
+3. ADR link: frontmatter `decisions` ↔ the ADR's `units` field.
+4. Changed the unit without changing the contract? Update `last-sync`, declare "contract unchanged".
+5. Done: record the transition. LOG: `units touched + corresponding docs`.
 
-## Regras de sincronia
-- Commit que toca `X` toca `X.md` (ou declara contrato inalterado). Sem exceção.
-- Unidade sem doc = commit bloqueado (o mesmo gate do pre-commit).
-- ADR órfã (sem unidades) = aviso na próxima auditoria.
+## Sync rules
+- A commit that touches `X` touches `X.md` (or declares the contract unchanged). No exceptions.
+- Unit without doc = commit blocked (the same gate as pre-commit).
+- Orphaned ADR (no units) = warning in the next audit.
 
-## Anti-racionalização
-| Desculpa | Resposta |
+## Anti-rationalization
+| Excuse | Response |
 |---|---|
-| "Arquivo pequeno, se explica" | O catálogo é para o agente que NUNCA abriu este arquivo. |
-| "Atualizo a doc no final" | Final de quê? Cada commit é um estado válido ou não é. |
+| "Small file, it explains itself" | The catalog is for the agent who has NEVER opened this file. |
+| "I'll update the doc at the end" | The end of what? Each commit is a valid state or it isn't. |
 
-## Verificação
-CATALOG.md sem linha para a unidade criada = skill não executada.
-Frontmatter sem decisions quando o domínio tem ADRs aplicáveis = vínculo furado.
+## Verification
+CATALOG.md without a line for the created unit = skill not executed.
+Frontmatter without decisions when the domain has applicable ADRs = broken link.
 ````
 
-### skills/implementar/SKILL.md
+### skills/implement/SKILL.md
 
 ````markdown
 ---
-name: implementar
+name: implement
 description: >
-  Executa um micro-objetivo. ÚNICA porta para implements-skills: consulta
-  IMPLEMENTS-CATALOG.md, seleciona 1–3 para a task, carrega só o necessário.
-  Usar para toda execução de código.
+  Executes a micro-objective. ONLY gateway to implements-skills: consults
+  IMPLEMENTS-CATALOG.md, selects 1–3 for the task, loads only what is needed.
+  Use for every code execution.
 ---
 
-# implementar
+# implement
 
-## Objetivo
-Código com a skill certa do dialeto certo, pagando só pelo que esta task usa.
+## Objective
+Code with the right skill for the right dialect, paying only for what this task uses.
 
-## Processo
-1. Pegue o micro do NOW. Confira a spec (objetivo, critérios, unidades, teste do objetivo).
-2. Leia IMPLEMENTS-CATALOG.md. Selecione 1–3 skills com: `usar quando` batendo com a task.
-   Nenhuma bate? Prossiga sem — cataloga a lacuna como candidate.
-3. Carregue SÓ as selecionadas. Execute o micro seguindo-as.
-4. Antes do commit: declare os arquivos tocados em `.context/touched`
-   (o pre-commit compara contra isso — AGENTS.md §6).
-5. Unitário: TDD à risca nas unidades de lógica (a skill implements escolhida define a forma).
-6. Terminou: registra transição. LOG: `micro executado`, `implements selecionadas + POR QUÊ`,
-   `diff resumido`. NOW: próximo micro como "próximo passo imediato".
+## Process
+1. Take the micro from the NOW. Check the spec (objective, criteria, units, objective test).
+2. Read IMPLEMENTS-CATALOG.md. Select 1–3 skills whose `use when` matches the task.
+   None matches? Proceed without — catalog the gap as a candidate.
+3. Load ONLY the selected ones. Execute the micro following them.
+4. Before the commit: declare the touched files in `.context/touched`
+   (pre-commit compares against this — AGENTS.md §6).
+5. Unit tests: TDD to the letter on logic units (the chosen implements skill defines the form).
+6. Done: record the transition. LOG: `micro executed`, `implements selected + WHY`,
+   `summarized diff`. NOW: next micro as the "immediate next step".
 
-## Anti-racionalização
-| Desculpa | Resposta |
+## Anti-rationalization
+| Excuse | Response |
 |---|---|
-| "Carrego todas as implements, é mais seguro" | É o modo-ECC: tudo disponível sempre = agente perdido sempre. |
-| "Não sei qual serve, leio duas inteiras" | O catálogo tem `usar quando` para exatamente isso. Se não tem, o catálogo está ruim — conserte-o. |
+| "I'll load all the implements, it's safer" | That's ECC mode: everything available always = agent lost always. |
+| "I don't know which one serves, I'll read two entirely" | The catalog has `use when` for exactly this. If it doesn't, the catalog is bad — fix it. |
 
-## Verificação
-Seleção de implements registrada no LOG com justificativa (ausência também é registro: "nenhuma aplicável porque...").
-Arquivos do commit ⊆ arquivos declarados em `.context/touched`.
+## Verification
+Selection of implements recorded in the LOG with justification (absence is also a record: "none applicable because...").
+Files in the commit ⊆ files declared in `.context/touched`.
 ````
 
-### skills/verificar-objetivo/SKILL.md
+### skills/verify-objective/SKILL.md
 
 ````markdown
 ---
-name: verificar-objetivo
+name: verify-objective
 description: >
-  Valida o objetivo/micro como um QA testaria: comportamento, integração,
-  aceitação. É o GATE de entrega — não TDD unitário, que é higiene interna.
-  Usar ao fechar todo micro e todo objetivo.
+  Validates the objective/micro the way a QA would test it: behavior, integration,
+  acceptance. This is the delivery GATE — not unit TDD, which is internal hygiene.
+  Use when closing every micro and every objective.
 ---
 
-# verificar-objetivo
+# verify-objective
 
-## Objetivo
-Provar que o que foi pedido aconteceu. Com evidência executável.
+## Objective
+Prove that what was asked for happened. With executable evidence.
 
-## Processo
-1. Releia a spec do micro: o campo `teste do objetivo` diz COMO validar.
-   Campo vazio? A spec está incompleta — volte ao `decompor`, não invente o teste agora.
-2. Execute o teste do objetivo. Registre: comando, saída, resultado.
-3. Checklist de rejeição (qualquer um reprova):
-   - [ ] objetivo testado como comportamento, não como "código parece certo"
-   - [ ] caminhos de erro exercitados (entrada inválida, limite, vazio)
-   - [ ] integração entre unidades do micro exercitada, não só unidades isoladas
-   - [ ] evidência é reproduzível (comando + saída registrados no LOG)
-4. Falhou? Não entregue. Registre a falha no LOG, corrija, re-execute. Loop até verde.
-5. Passou? Terminou: registra transição. LOG: `teste executado + evidência`.
-   NOW: micro marcado concluído.
+## Process
+1. Re-read the micro's spec: the `objective test` field says HOW to validate.
+   Empty field? The spec is incomplete — go back to `decompose`, don't invent the test now.
+2. Execute the objective test. Record: command, output, result.
+3. Rejection checklist (any one fails it):
+   - [ ] objective tested as behavior, not as "the code looks right"
+   - [ ] error paths exercised (invalid input, limit, empty)
+   - [ ] integration between the micro's units exercised, not just isolated units
+   - [ ] evidence is reproducible (command + output recorded in the LOG)
+4. Failed? Don't deliver. Record the failure in the LOG, fix it, re-run. Loop until green.
+5. Passed? Done: record the transition. LOG: `test executed + evidence`.
+   NOW: micro marked complete.
 
-## Anti-racionalização
-| Desculpa | Resposta |
+## Anti-rationalization
+| Excuse | Response |
 |---|---|
-| "Unitários todos verdes" | Unitário verde + objetivo quebrado = REPROVADO. Hierarquia no AGENTS.md §4. |
-| "Testar objetivo é caro" | Mais caro é descobrir no usuário. |
-| "Vou validar manual depois" | "Depois" é onde objetivos vão morrer. |
+| "All unit tests green" | Green units + broken objective = REJECTED. Hierarchy in AGENTS.md §4. |
+| "Testing the objective is expensive" | More expensive is discovering it from the user. |
+| "I'll validate manually later" | "Later" is where objectives go to die. |
 
-## Verificação
-Entrada de LOG com comando + saída real. Sem isso, o micro NÃO está concluído, independentemente do que o resto diz.
+## Verification
+LOG entry with command + real output. Without it, the micro is NOT complete, regardless of what the rest says.
 ````
 
-### skills/conter/SKILL.md
+### skills/contain/SKILL.md
 
 ````markdown
 ---
-name: conter
+name: contain
 description: >
-  Classifica a task (trivial/média/grande) ANTES de executar e aplica o fast
-  path ao trivial. Contém over-engineering durante toda execução.
-  Primeira skill a rodar em qualquer task.
+  Classifies the task (trivial/medium/large) BEFORE executing and applies the fast
+  path to the trivial. Contains over-engineering throughout execution.
+  First skill to run on any task.
 ---
 
-# conter
+# contain
 
-## Objetivo
-Burocracia proporcional ao problema. Código mínimo que funciona.
+## Objective
+Bureaucracy proportional to the problem. Minimal code that works.
 
-## Classificação (antes de tudo)
-| Classe | Critério | Caminho |
+## Classification (before everything)
+| Class | Criterion | Path |
 |---|---|---|
-| trivial | diff < 10 linhas, sem mudança de contrato | diff mínimo, 1 linha de LOG, sem pipeline |
-| média | uma unidade ou um micro | clarificar leve → implementar → verificar |
-| grande | muda entendimento, várias unidades, decisão de domínio | pipeline completo |
+| trivial | diff < 10 lines, no contract change | minimal diff, 1 LOG line, no pipeline |
+| medium | one unit or one micro | light clarify → implement → verify |
+| large | changes understanding, multiple units, a domain decision | full pipeline |
 
-## Escada de contenção (antes de escrever código, em ordem)
-1. Precisa existir? (YAGNI — necessidade especulativa não existe)
-2. Já existe no catálogo? Reuse.
-3. Stdlib/plataforma resolve? Use.
-4. Dependência já instalada resolve? Use. Nova dependência = justificativa no LOG.
-5. Uma linha resolve? Uma linha.
-6. Só então: código mínimo que funciona.
+## Containment ladder (before writing code, in order)
+1. Does it need to exist? (YAGNI — speculative need doesn't exist)
+2. Does it already exist in the catalog? Reuse.
+3. Does stdlib/the platform solve it? Use it.
+4. Does an already-installed dependency solve it? Use it. New dependency = justification in the LOG.
+5. Does one line solve it? One line.
+6. Only then: minimal code that works.
 
-## Leis durante execução
-- Sem abstração não pedida; interface com 1 implementação não existe.
-- Deleção > adição. Chato > esperto (esperto é o que alguém decifra às 3h).
-- Bug = causa raiz: grep todo caller antes de tocar.
-- Corte de canto deliberado com teto conhecido? Comente: `contencao: [teto], migrar quando [gatilho]`.
+## Laws during execution
+- No unrequested abstraction; an interface with 1 implementation doesn't exist.
+- Deletion > addition. Boring > clever (clever is what someone has to decipher at 3am).
+- Bug = root cause: grep every caller before touching.
+- Deliberate corner cut with a known ceiling? Comment it: `containment: [ceiling], migrate when [trigger]`.
 
-## Nunca contenha
-Validação em fronteira de confiança, tratamento que evita perda de dados,
-segurança, acessibilidade básica, qualquer coisa explicitamente pedida.
+## Never contain
+Validation at a trust boundary, handling that prevents data loss,
+security, basic accessibility, anything explicitly requested.
 
-## Terminou: registra transição. LOG: `classificação + racional em 1 linha`.
+## Done: record the transition. LOG: `classification + rationale in 1 line`.
 
-## Anti-racionalização
-| Desculpa | Resposta |
+## Anti-rationalization
+| Excuse | Response |
 |---|---|
-| "Vou fazer completo, é mais robusto" | Robustez sem requisito é peso com nome bonito. |
-| "Depois refatoro" | Depois é dívida; agora é diff mínimo. |
+| "I'll make it complete, it's more robust" | Robustness without a requirement is weight with a fancy name. |
+| "I'll refactor later" | Later is debt; now is minimal diff. |
 
-## Verificação
-Classificação registrada no LOG ANTES da execução (não reconstruída depois).
+## Verification
+Classification recorded in the LOG BEFORE execution (not reconstructed afterwards).
 ````
 
-### skills/capturar-humano/SKILL.md
+### skills/capture-human/SKILL.md
 
 ````markdown
 ---
-name: capturar-humano
+name: capture-human
 description: >
-  Processa edições humanas fora do fluxo: lê o porquê e o conceito de
-  .context/pending-human.md, analisa o diff, gera o "como foi feito",
-  registra no LOG como conhecimento e reconcilia o NOW.
-  Roda no início de toda sessão que encontra pending preenchido.
+  Processes human edits outside the flow: reads the because and the concept from
+  .context/pending-human.md, analyzes the diff, generates the "how it was done",
+  records it in the LOG as knowledge and reconciles the NOW.
+  Runs at the start of every session that finds a filled pending file.
 ---
 
-# capturar-humano
+# capture-human
 
-## Objetivo
-Edição humana entra no fluxo como conhecimento capturado, não como buraco negro.
+## Objective
+A human edit enters the flow as captured knowledge, not as a black hole.
 
-## Processo
-1. Cold start: existe `.context/pending-human.md` com `porque:` e `conceito:` preenchidos?
-   Não existe/não preenchido → nada a fazer (o gate do hook cuida da obrigatoriedade).
-2. Leia o porquê e o conceito. Obtenha o diff real do commit correspondente.
-3. Gere o "como foi feito": o que a edição faz tecnicamente, conectado ao porquê.
-4. Escreva entrada no LOG:
+## Process
+1. Cold start: does `.context/pending-human.md` exist with `because:` and `concept:` filled?
+   Doesn't exist/not filled → nothing to do (the hook's gate enforces the requirement).
+2. Read the because and the concept. Get the real diff of the corresponding commit.
+3. Generate the "how it was done": what the edit does technically, connected to the because.
+4. Write a LOG entry:
 ```markdown
-# NNN — capturar-humano (origem: edição manual)
-quando: [timestamp do commit]
-porque: [o que o humano escreveu, verbatim]
-conceito: [a ideia por trás, verbatim]
-como: [gerado pela IA a partir do diff, conectando técnica ao porquê]
-unidades afetadas: [do diff]
-impacto no NOW: [nenhum | ajuste feito]
+# NNN — capture-human (origin: manual edit)
+when: [commit timestamp]
+because: [what the human wrote, verbatim]
+concept: [the idea behind it, verbatim]
+how: [generated by the AI from the diff, connecting the technique to the because]
+affected units: [from the diff]
+NOW impact: [none | adjustment made]
 ```
-5. Reconcilie: a edição invalida decisão de domínio? → `modelar-dominio` (emenda ou nova ADR).
-   Invalida docs de unidade? → `catalogar`. Muda o próximo passo? → reescreva o NOW.
-6. Limpe pending-human.md e `.context/touched` (estado consumido).
-7. Terminou: esta skill É uma transição — a entrada acima é o registro.
+5. Reconcile: does the edit invalidate a domain decision? → `model-domain` (amend or new ADR).
+   Invalidates unit docs? → `catalog`. Changes the next step? → rewrite the NOW.
+6. Clear pending-human.md and `.context/touched` (state consumed).
+7. Done: this skill IS a transition — the entry above is the record.
 
-## Anti-racionalização
-| Desculpa | Resposta |
+## Anti-rationalization
+| Excuse | Response |
 |---|---|
-| "Diff pequeno, não precisa capturar" | O diff pequeno com o porquê errado é o bug caro. O custo é ler 2 linhas. |
-| "Só sincronizo o NOW" | Sem o porquê, a edição vira mistério permanente — arqueologia na próxima auditoria. |
+| "Small diff, no need to capture" | The small diff with the wrong because is the expensive bug. The cost is reading 2 lines. |
+| "I'll just sync the NOW" | Without the because, the edit becomes a permanent mystery — archaeology in the next audit. |
 
-## Verificação
-Entrada de LOG com os 3 campos (porque verbatim, conceito verbatim, como gerado).
-NOW reconciliado ou declarado sem impacto.
+## Verification
+LOG entry with the 3 fields (because verbatim, concept verbatim, how generated).
+NOW reconciled or declared without impact.
 ````
 
-### skills/auditar/SKILL.md
+### skills/audit/SKILL.md
 
 ````markdown
 ---
-name: auditar
+name: audit
 description: >
-  Diagnóstico sob demanda quando a qualidade cai: lê o LOG em sequência,
-  encontra a transição onde a execução degradou, reporta com evidência.
-  Também varre unidades sem doc, ADRs órfãs, termos órfãos.
-  Invocada explicitamente — nunca automática.
+  On-demand diagnosis when quality drops: reads the LOG in sequence,
+  finds the transition where execution degraded, reports with evidence.
+  Also sweeps units without docs, orphaned ADRs, orphaned terms.
+  Invoked explicitly — never automatic.
 ---
 
-# auditar
+# audit
 
-## Objetivo
-Responder "onde o processo falhou" com linha do LOG na mão, não com palpite.
+## Objective
+Answer "where did the process fail" with a LOG line in hand, not with a guess.
 
-## Processo
-1. Leia o LOG do objetivo em ordem. Para cada transição, confira:
-   - input declarado era o que a skill recebeu de fato (contra artefatos)?
-   - output declarado foi produzido (contra git/artefatos)?
-   - campos obrigatórios presentes (implements+porquê, evidência de teste, classificação ANTES)?
-2. Varreduras estruturais:
-   - unidades sem `.md` ou com `última-sincronia` atrás do commit
-   - ADRs órfãs (sem unidades) e unidades com `decisions` apontando ADR inexistente
-   - termos do GLOSSARY sem uso; uso de termos fora do glossário
-   - NOW acima do teto (→ decomposição falhou)
-3. Reporte, por achado: **gravidade · evidência (arquivo+linha/entrada do LOG) · causa provável · correção mínima**.
-4. Não corrija no mesmo fôlego (a menos que seja trivial): auditoria é diagnóstico.
-5. Terminou: registra transição. LOG: `achados + gravidades`. O relatório vira arquivo em `docs/auditorias/`.
+## Process
+1. Read the objective's LOG in order. For each transition, check:
+   - was the declared input what the skill actually received (against artifacts)?
+   - was the declared output produced (against git/artifacts)?
+   - are mandatory fields present (implements+why, test evidence, classification BEFORE)?
+2. Structural sweeps:
+   - units without `.md` or with `last-sync` behind the commit
+   - orphaned ADRs (no units) and units with `decisions` pointing to a nonexistent ADR
+   - GLOSSARY terms with no usage; usage of terms outside the glossary
+   - NOW above the cap (→ decomposition failed)
+3. Report, per finding: **severity · evidence (file+line/LOG entry) · probable cause · minimal fix**.
+4. Don't fix in the same breath (unless trivial): audit is diagnosis.
+5. Done: record the transition. LOG: `findings + severities`. The report becomes a file in `docs/audits/`.
 
-## Pergunta-guia
-"O que a skill N recebeu vs. o que produziu — em qual transição a divergência começou?"
-A primeira divergência é o local da falha; tudo depois é cascata.
+## Guiding question
+"What did skill N receive vs. what it produced — at which transition did the divergence begin?"
+The first divergence is the location of the failure; everything after is cascade.
 
-## Verificação
-Cada achado cita entrada específica do LOG ou arquivo+linha.
-Achado sem evidência citável não é achado, é opinião.
+## Verification
+Every finding cites a specific LOG entry or file+line.
+A finding without citable evidence isn't a finding, it's an opinion.
 ````
 
 ---
 
-## Artefatos de Bootstrap
+## Bootstrap Artifacts
 
 ### ADR-CATALOG.md
 
 ```markdown
 # ADR-CATALOG
 
-| ID | Status | Decisão (1 linha) | Unidades |
-|----|--------|-------------------|----------|
-| 0001 | aceita | Responsabilidade única por unidade coesa, não por função/arquivo | todas as skills |
-| 0002 | aceita | Taxonomia 3 camadas; implementar é a única porta para implements | implementar, AGENTS.md |
-| 0003 | aceita | Catálogo + doc por unidade como índice de contexto do agente | catalogar, CATALOG.md |
-| 0004 | aceita | ADRs com vínculo bidirecional e atualização obrigatória no mesmo commit | modelar-dominio, catalogar |
-| 0005 | aceita | QA-first: teste do objetivo é o gate; TDD unitário é higiene | verificar-objetivo |
-| 0006 | aceita | context-now: NOW+LOG; escreve sempre, lê sob 3 gatilhos | protocolo, todas |
-| 0007 | aceita | Gate humano determinístico no pre-commit + enriquecimento adiada | capturar-humano, hooks/pre-commit |
-| 0008 | aceita | Fast path obrigatório ao trivial | conter |
-| 0009 | aceita | Teto do NOW como diagnóstico de decomposição | protocolo, decompor |
-| 0010 | aceita | DDD-lite: linguagem ubíqua sim, cerimônia formal não | modelar-dominio |
+| ID | Status | Decision (1 line) | Units |
+|----|--------|-------------------|-------|
+| 0001 | accepted | Single responsibility per cohesive unit, not per function/file | all skills |
+| 0002 | accepted | 3-layer taxonomy; implement is the only gateway to implements | implement, AGENTS.md |
+| 0003 | accepted | Catalog + doc per unit as the agent's context index | catalog, CATALOG.md |
+| 0004 | accepted | ADRs with bidirectional link and mandatory update in the same commit | model-domain, catalog |
+| 0005 | accepted | QA-first: the objective test is the gate; unit TDD is hygiene | verify-objective |
+| 0006 | accepted | context-now: NOW+LOG; always write, read on 3 triggers | protocol, all |
+| 0007 | accepted | Deterministic human gate in pre-commit + deferred enrichment | capture-human, hooks/pre-commit |
+| 0008 | accepted | Mandatory fast path for the trivial | contain |
+| 0009 | accepted | The NOW cap as a decomposition diagnostic | protocol, decompose |
+| 0010 | accepted | DDD-lite: ubiquitous language yes, formal ceremony no | model-domain |
 ```
 
-### docs/adr/0001-unidade-coesa.md (as demais seguem este template)
+### docs/adr/0001-cohesive-unit.md (the others follow this template)
 
 ```markdown
 ---
 id: 0001
-status: aceita
+status: accepted
 supersedes: —
-unidades: [skills/*/SKILL.md, AGENTS.md]
+units: [skills/*/SKILL.md, AGENTS.md]
 ---
-# Responsabilidade única por unidade coesa, não por função por arquivo
+# Single responsibility per cohesive unit, not per function per file
 
-## contexto
-A proposta original exigia "uma função por arquivo". Em Go e Rust isso é
-anti-idiomático e gera explosão de navegação. O objetivo real era
-rastreabilidade e localização rápida, não contagem de arquivos.
+## context
+The original proposal required "one function per file". In Go and Rust this is
+unidiomatic and causes navigation explosion. The real goal was
+traceability and fast location, not file counting.
 
-## alternativas
-- Uma função/arquivo literal: rejeitada — anti-idiomática em Go/Rust, piora navegação.
-- Sem regra estrutural: rejeitada — agentes perdem tempo relendo código para achar conceitos.
+## alternatives
+- Literal one function/file: rejected — unidiomatic in Go/Rust, worsens navigation.
+- No structural rule: rejected — agents waste time rereading code to find concepts.
 
-## consequências
-Ganhamos: rastreabilidade agnóstica de linguagem, docs concisas, testes focados.
-Abrimos mão: enforcement mecânico simples — "coeso" exige julgamento no review.
-O julgamento tem régua: nome do arquivo = nome do único conceito; 50–150 linhas.
+## consequences
+We gain: language-agnostic traceability, concise docs, focused tests.
+We give up: simple mechanical enforcement — "cohesive" requires judgment in review.
+The judgment has a ruler: file name = name of its single concept; 50–150 lines.
 ```
 
 ### CATALOG.md
 
 ```markdown
-# CATALOG — unidades
+# CATALOG — units
 
-| Unidade | Responsabilidade |
+| Unit | Responsibility |
 |---|---|
-| AGENTS.md | leis, taxonomia de skills, pipeline, protocolo context-now |
-| skills/clarificar | detecta ambiguidades do prompt, 3 opções, valida entendimento |
-| skills/decompor | quebra objetivo em checkpoint→macro→micro com spec verificável |
-| skills/modelar-dominio | glossário + ADRs com granularidade correta e vínculo |
-| skills/catalogar | índice de unidades + doc de contexto + vínculo bidirecional |
-| skills/implementar | roteia implements-skills e executa o micro |
-| skills/verificar-objetivo | gate QA-first com evidência executável |
-| skills/conter | classificação trivial/média/grande + contenção + fast path |
-| skills/capturar-humano | converte edição humana em conhecimento no LOG |
-| skills/auditar | diagnóstico de degradação com evidência do LOG |
-| hooks/pre-commit | gate determinístico: divergência exige porquê |
+| AGENTS.md | laws, skill taxonomy, pipeline, context-now protocol |
+| skills/clarify | detects prompt ambiguities, 3 options, validates understanding |
+| skills/decompose | breaks objective into checkpoint→macro→micro with verifiable spec |
+| skills/model-domain | glossary + ADRs with correct granularity and linking |
+| skills/catalog | index of units + context doc + bidirectional link |
+| skills/implement | routes implements-skills and executes the micro |
+| skills/verify-objective | QA-first gate with executable evidence |
+| skills/contain | trivial/medium/large classification + containment + fast path |
+| skills/capture-human | turns a human edit into knowledge in the LOG |
+| skills/audit | degradation diagnosis with LOG evidence |
+| hooks/pre-commit | deterministic gate: divergence requires a because |
 ```
 
 ### hooks/pre-commit
 
 ```bash
 #!/usr/bin/env bash
-# ADR-0007: gate determinístico. Enriquecimento LLM é adiada (capturar-humano).
+# ADR-0007: deterministic gate. LLM enrichment is deferred (capture-human).
 set -euo pipefail
 
 TOUCHED=".context/touched"
@@ -640,15 +640,15 @@ else
 fi
 
 if [ -n "$DIVERGENT" ]; then
-  if [ -f "$PENDING" ] && grep -q '^porque: .\+' "$PENDING"; then
-    exit 0   # porquê presente; capturar-humano expande na próxima sessão
+  if [ -f "$PENDING" ] && grep -q '^because: .\+' "$PENDING"; then
+    exit 0   # because present; capture-human expands it in the next session
   fi
-  echo "✋ Fora do fluxo do agente:"
+  echo "✋ Outside the agent's flow:"
   echo "$DIVERGENT"
   echo ""
-  echo "Preencha .context/pending-human.md:"
-  echo "  porque:   <por que você alterou>"
-  echo "  conceito: <a ideia por trás>"
+  echo "Fill in .context/pending-human.md:"
+  echo "  because:  <why you changed it>"
+  echo "  concept:  <the idea behind it>"
   exit 1
 fi
 
@@ -658,47 +658,47 @@ exit 0
 ### .context/pending-human.md
 
 ```markdown
-porque: 
-conceito: 
+because: 
+concept: 
 ```
 
 ### .context/NOW.md
 
 ```markdown
 # NOW
-objetivo: bootstrap do meta-repo do agente
-etapa: implementar
-passo: artefatos criados / instalação pendente
-status: em-progresso
+objective: bootstrap of the agent meta-repo
+step: implement
+phase: artifacts created / installation pending
+status: in-progress
 
-## Entendimento atual
-Repo auto-hospeda o modelo: 9 skills nucleares, AGENTS.md como lei,
-ADRs 0001–0010 derivadas de 6 rodadas de clarificação. Gate humano no
-pre-commit, protocolo context-now atravessando tudo.
+## Current understanding
+The repo self-hosts the model: 9 core skills, AGENTS.md as law,
+ADRs 0001–0010 derived from 6 clarification rounds. Human gate in
+pre-commit, context-now protocol crossing everything.
 
-## Decisões desta execução
-- Skill names em português (usuário fala pt-BR)
-- ADRs completas: só a 0001 como exemplo, resto via catálogo (contenção aplicada à própria entrega)
-- pre-commit v1 não cobre merges — aceito, documentado
+## Decisions of this execution
+- Skill names in English (canonical names)
+- Full ADRs: only 0001 as an example, the rest via the catalog (containment applied to the delivery itself)
+- pre-commit v1 doesn't cover merges — accepted, documented
 
-## Próximo passo imediato
-Instalar nos 3 CLIs (Codex, OpenCode, ZCode) e executar a primeira task real
+## Immediate next step
+Install on the 3 CLIs (Codex, OpenCode, ZCode) and execute the first real task
 
-## Bloqueios
+## Blockers
 —
 ```
 
-### .context/log/001-clarificar.md
+### .context/log/001-clarify.md
 
 ```markdown
-# 001 — clarificar + modelar (a conversa que originou o sistema)
-quando: [data]
-input: ideia de agente simplificado baseado em ponytail + 5 repos de skills
-output: modelo completo acordado (ADRs 0001–0010)
-como: 6 rodadas; cada rodada atacou a pior fragilidade da anterior:
-      unidade coesa → taxonomia+roteador → catálogo ADR → QA-first →
-      context-now assimétrico → gate humano determinístico
-artefatos: AGENTS.md, 9 skills, catálogos, hook, ADRs
-implements usadas: — (não existiam ainda; bootstrap)
-próxima: implementar → instalação nos CLIs
+# 001 — clarify + model (the conversation that originated the system)
+when: [date]
+input: idea of a simplified agent based on ponytail + 5 skill repos
+output: agreed complete model (ADRs 0001–0010)
+how: 6 rounds; each round attacked the worst fragility of the previous one:
+      cohesive unit → taxonomy+router → ADR catalog → QA-first →
+      asymmetric context-now → deterministic human gate
+artifacts: AGENTS.md, 9 skills, catalogs, hook, ADRs
+implements used: — (they didn't exist yet; bootstrap)
+next: implement → installation on the CLIs
 ```

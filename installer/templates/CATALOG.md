@@ -1,6 +1,6 @@
-# CATALOG — unidades
+# CATALOG — units
 
-Índice de 1 linha por unidade: o agente descobre o que existe aqui, não no código.
+One line per unit: the agent discovers what exists here, not in the code.
 
-| Unidade | Responsabilidade |
+| Unit | Responsibility |
 |---|---|
