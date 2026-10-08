@@ -1,29 +1,29 @@
 # NOW
-objective: implement BACKLOGS/001 (goal/ structure)
-stage: done (LOG 015)
-step: goal/ live, PLAN.md retired, skills amended — awaiting cross-verification
+objective: implement BACKLOGS/002 remainder (multiagent flow)
+stage: done (LOG 019)
+step: branch gate live, claim mechanism dogfooded, AGENTS §8 — awaiting cross-verification
 status: done
 
 ## Current understanding
-goal/ is the persistent home of objectives (ADR-0012): goal/NNN-slug/
-with GOAL.md (map + success metric) and micro files (spec + mutable
-status frontmatter; `done` written only by verify-objective). Macro level
-optional. First instance: goal/001-goal-structure (this very task —
-dogfood). PLAN.md retired with zero living references.
+Multiagent flow complete: topology (since LOG 008) + deterministic
+branch gate (ADR-0014). .context/protected-branches (opt-in) makes the
+hook block direct commits on dev-ai/main without the human why; merges
+skip pre-commit by git design (verified path). Claim via owner: in
+micro frontmatter, first-commit-wins. Target projects unaffected (no
+file planted). Live evidence: dev-ai blocked an agent commit (LOG 019).
 
 ## Immediate next step (active micro path)
-goal/001-goal-structure/003-dogfood-and-verify.md — status: done;
-goal map all-done. Next: cross-verification of feature/goal-structure,
-then user picks: audit findings 1–2, BACKLOGS/002 remainder, or a real
-task in a target project.
+goal/004-multiagent-flow/ — all 4 micros done. Next: cross-verification
+queue (LOG 015–019) for promotion to dev-ai; then BACKLOGS/003
+(brainstorm skill) or audit findings 1–2.
 
 ## Decisions that change the future
-- goal ≡ checkpoint (renamed); no new skill; done = frontmatter status;
-  goal files are units (gate covers them via touched)
-- Medium tasks: one goal, one micro, no macro (minimal mode)
-- Pending: audit findings 1–2; BACKLOGS/002 remainder (branch gate in
-  hook, micro claim via owner:); promotion of this feature awaits
-  cross-verification (LOG 015 is the verifier's input)
+- Direct commits on dev-ai/main (meta-repo) require because: — the
+  human's field; agent commits go via dev-ai-<agent> only
+- because-abuse on protected branches is a containment accepted and
+  auditable pattern (ADR-0014)
+- Installer suite now 24 asserts; whitelist untouched (targets get no
+  protected-branches file)
 
 ## Blockers
 —

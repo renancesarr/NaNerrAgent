@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 # ADR-0007: deterministic gate. LLM enrichment is deferred (capture-human).
+# ADR-0014: branch gate — opt-in via .context/protected-branches (one
+# branch per line). Direct (non-merge) commits on listed branches require
+# the human why (because:). Targets without the file are unaffected.
 set -euo pipefail
 
 TOUCHED=".context/touched"
@@ -7,6 +10,22 @@ PENDING=".context/pending-human.md"
 STAGED=$(git diff --cached --name-only)
 
 [ -z "$STAGED" ] && exit 0
+
+WHY_OK=0
+if [ -f "$PENDING" ] && grep -Eq '^because: .+' "$PENDING"; then
+  WHY_OK=1   # -E: in BRE '+' is literal (bug found in 1st dogfood)
+fi
+
+# ADR-0014: protected branches (opt-in file)
+if [ -f ".context/protected-branches" ] && [ "$WHY_OK" -ne 1 ]; then
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  if grep -qx "$BRANCH" .context/protected-branches; then
+    echo "✋ $BRANCH is protected (ADR-0014): direct commits need the human why"
+    echo "  agents commit on dev-ai-<agent>; integration arrives via verified merges"
+    echo "  human path: fill because: in .context/pending-human.md"
+    exit 1
+  fi
+fi
 
 if [ -f "$TOUCHED" ]; then
   # LC_ALL=C: comm compares in byte order; locale sort diverges from it
@@ -18,8 +37,7 @@ else
 fi
 
 if [ -n "$DIVERGENT" ]; then
-  # -E: in BRE '+' is literal and '.+' never matches (bug found in 1st dogfood)
-  if [ -f "$PENDING" ] && grep -Eq '^because: .+' "$PENDING"; then
+  if [ "$WHY_OK" -eq 1 ]; then
     exit 0   # why present; capture-human expands it in the next session
   fi
   echo "✋ Out of the agent's flow:"
