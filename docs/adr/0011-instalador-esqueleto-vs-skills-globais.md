@@ -29,3 +29,13 @@ o instalador idempotente e incapaz de vazar histórico do meta-repo.
 Abrimos mão: o alvo não documenta as skills localmente (depende do CLI
 configurado); projetos que divergirem do núcleo resolvem via
 implements-skills próprias, não via fork das agent-skills.
+
+## emenda 1 — AGENTS.md existente e anonimato dos alvos (2026-10-08)
+Primeiro uso real num alvo com AGENTS.md próprio: o conteúdo antigo passa
+a ser preservado VERBATIM no final do novo (antes: conflito que exigia
+--force + merge manual). Guard por header impede duplicação em re-install
+(contencao: renovar leis preservando cauda fica para quando houver
+upgrade real das leis). E o meta-repo NÃO registra identidade de alvos —
+nem path, nem stack, nem dados: registros dizem apenas "instalação
+funcionou". Alternativa rejeitada: registrar alvos — transformaria o
+meta-repo em rastreador de projetos alheios, sem ganho para o sistema.

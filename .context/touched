@@ -1,3 +1,8 @@
-.context/log/011-primeira-instalacao-real.md
+installer/install.sh
+installer/test-install.sh
+docs/adr/0011-instalador-esqueleto-vs-skills-globais.md
+ADR-CATALOG.md
+CATALOG.md
 .context/NOW.md
 .context/touched
+.context/log/012-instalador-merge-anonimato.md

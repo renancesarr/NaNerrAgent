@@ -25,8 +25,9 @@ ALVO="$(cd "$ALVO" && pwd)"
 [ "$ALVO" != "$META" ] || { echo "✋ não instale sobre o próprio meta-repo"; exit 1; }
 
 # conflitos: só sobrescreve com --force; .context/log/ nunca é destruído
+# (AGENTS.md NÃO está nesta lista: existente é preservado — ver abaixo)
 CONFLITOS=()
-for f in AGENTS.md CATALOG.md ADR-CATALOG.md IMPLEMENTS-CATALOG.md \
+for f in CATALOG.md ADR-CATALOG.md IMPLEMENTS-CATALOG.md \
          hooks/pre-commit .context/NOW.md; do
   if [ -e "$ALVO/$f" ]; then CONFLITOS+=("$f"); fi
 done
@@ -44,8 +45,22 @@ if [ ! -d "$ALVO/.git" ]; then
 fi
 git -C "$ALVO" config core.hooksPath hooks
 
-# núcleo copiado da fonte viva do meta-repo
-install -m 644 "$META/AGENTS.md"        "$ALVO/AGENTS.md"
+# núcleo: AGENTS.md — existente é preservado VERBATIM no final do novo
+# (ADR-0011, emenda 1). Guard: header igual ao do sistema = já mergeado;
+# contencao: re-install não renova leis nem duplica cauda; migrar quando
+# houver upgrade real das leis
+if [ -f "$ALVO/AGENTS.md" ]; then
+  if [ "$(head -1 "$ALVO/AGENTS.md")" != "$(head -1 "$META/AGENTS.md")" ]; then
+    VELHO="$(mktemp)"
+    cp "$ALVO/AGENTS.md" "$VELHO"
+    install -m 644 "$META/AGENTS.md" "$ALVO/AGENTS.md"
+    printf '\n' >> "$ALVO/AGENTS.md"
+    cat "$VELHO" >> "$ALVO/AGENTS.md"
+    rm -f "$VELHO"
+  fi
+else
+  install -m 644 "$META/AGENTS.md" "$ALVO/AGENTS.md"
+fi
 mkdir -p "$ALVO/hooks"
 install -m 755 "$META/hooks/pre-commit" "$ALVO/hooks/pre-commit"
 

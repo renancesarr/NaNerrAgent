@@ -50,6 +50,15 @@ fi
 check "--force sobrescreve"            "$META/installer/install.sh" "$TMP/proj" --force
 check "log/001 preservado no --force"  bash -c "[ \$(ls '$TMP/proj/.context/log' | wc -l) -eq 1 ]"
 
+# AGENTS.md pré-existente: preservado no final, leis no topo, sem duplicar
+mkdir -p "$TMP/proj2"
+printf '# Regras do meu projeto\nconteudo-proprio-do-projeto\n' > "$TMP/proj2/AGENTS.md"
+"$META/installer/install.sh" "$TMP/proj2" >/dev/null
+check "AGENTS.md alvo preservado no final"   bash -c "tail -1 '$TMP/proj2/AGENTS.md' | grep -q 'conteudo-proprio'"
+check "leis do sistema no topo do AGENTS.md" bash -c "head -3 '$TMP/proj2/AGENTS.md' | grep -q 'AGENTS.md'"
+"$META/installer/install.sh" "$TMP/proj2" --force >/dev/null
+check "re-install não duplica a cauda"       bash -c "[ \$(grep -c 'conteudo-proprio' '$TMP/proj2/AGENTS.md') -eq 1 ]"
+
 echo "---"
 if [ "$FALHAS" -eq 0 ]; then
   echo "TUDO VERDE (0 falhas)"

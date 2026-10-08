@@ -1,24 +1,26 @@
 # NOW
-objetivo: primeira instalação real concluída
-etapa: concluída (LOG 011)
-passo: instalador validado em produção; alvo anônimo por política
+objetivo: instalador v2 — merge de AGENTS.md + anonimato de alvos
+etapa: concluída (LOG 012)
+passo: 18/18 PASS; LOG 011 sanitizado; política em ADR-0011 emenda 1
 status: concluído
 
 ## Entendimento atual
-Sistema roda em ≥1 projeto real (identidade não registrada — política
-nova). Instalador validado (15/15 no teste + produção). No meta: ADR-0011,
-fluxo feature/* batizado, gate ativo, dev-ai-zcode publicada.
+Instalador lida nativamente com AGENTS.md existente (preserva verbatim no
+final, guard anti-duplicação). Política permanente: meta-repo NÃO conhece
+projetos-alvo — registros dizem só "instalação funcionou". Sistema roda
+em ≥1 projeto real.
 
 ## Decisões que mudam o futuro
-- Meta-repo NÃO registra identidade de alvos (path, stack, dados) —
-  registros dizem só "instalação funcionou"
-- Primeiro commit do alvo = só plantados; resto é decisão do dono
-- Pendências: achados 1–2 da auditoria; BACKLOGS/001; resto do 002;
-  verificação cruzada do instalador p/ dev-ai (LOG 010 é o insumo)
+- AGENTS.md existente no alvo = preservado verbatim no final (ADR-0011e1)
+- Meta-repo não registra identidade de alvos (path/stack/dados); LOG 011
+  reescrito como exceção autorizada ao append-only (documentada no 012)
+- contencao: re-install não renova AGENTS.md já mergeado
+- Pendências: achados 1–2 da auditoria; BACKLOGS/001 (goal/); resto do
+  002 (hook de branch, claim, AGENTS); verificação cruzada do instalador
+  p/ dev-ai (LOG 010+012 são o insumo do verificador)
 
 ## Próximo passo imediato
-Ajuste do instalador para AGENTS.md existente + política de anonimato
-formalizada (próxima entrada do LOG).
+Decidir achados 1–2 da auditoria — ou implementar BACKLOGS/001.
 
 ## Bloqueios
 —
