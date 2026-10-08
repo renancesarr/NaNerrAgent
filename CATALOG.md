@@ -22,3 +22,6 @@ Skills são autodocumentadas — o SKILL.md de cada uma é a sua doc de contexto
 | IMPLEMENTS-CATALOG.md | vazio no bootstrap — meta-repo sem dialeto próprio |
 | BACKLOGS/001-estrutura-goal.md | backlog: pasta goal/ com árvore macro/micro — implementação futura |
 | BACKLOGS/002-fluxo-multiagente.md | backlog: branches dev-ai-* por agente + verificação cruzada — implementação futura |
+| installer/install.sh | instala o sistema num projeto-alvo: leis + gate + catálogos zerados + .context fresco (ADR-0011) |
+| installer/templates/ | esqueletos zerados (catálogos, NOW, pending, touched, log-001) aplicados pelo install.sh |
+| installer/test-install.sh | teste do objetivo do instalador: alvo temporário real, 15 asserts, commit via gate |

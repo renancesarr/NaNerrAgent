@@ -12,6 +12,7 @@
 | 0008 | aceita | Fast path obrigatório ao trivial | conter |
 | 0009 | aceita | Teto do NOW como diagnóstico de decomposição | protocolo, decompor |
 | 0010 | aceita | DDD-lite: linguagem ubíqua sim, cerimônia formal não | modelar-dominio |
+| 0011 | aceita | Instalador: esqueleto copiado por projeto; skills globais por máquina | installer/ |
 
 ADR completa em arquivo: apenas 0001 (exemplo canônico); as demais vivem
 neste índice até cruzarem o teste de promoção (modelar-dominio, granularidade).
