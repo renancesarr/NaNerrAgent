@@ -1,2 +1,2 @@
-porque:
-conceito:
+because:
+concept:

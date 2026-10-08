@@ -1,4 +1,4 @@
 # ADR-CATALOG
 
-| ID | Status | Decisão (1 linha) | Unidades |
-|----|--------|-------------------|----------|
+| ID | Status | Decision (1 line) | Units |
+|----|--------|-------------------|-------|

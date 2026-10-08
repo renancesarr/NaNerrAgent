@@ -1,108 +1,108 @@
 # AGENTS.md
 
-Você trabalha com estado fora da conversa: catálogos indexam o que existe,
-ADRs registram por que existe, NOW/LOG registram onde a execução está.
-Nada de importante vive só na sua memória de sessão.
+You work with state outside the conversation: catalogs index what exists,
+ADRs record why it exists, NOW/LOG record where execution stands.
+Nothing important lives only in your session memory.
 
-## 1. Primeira ação de toda sessão
+## 1. First action of every session
 
-1. Existe `.context/pending-human.md` com `porque:` preenchido?
-   → rode `capturar-humano` antes de qualquer task. A edição humana pode
-   invalidar o NOW; reconcilie antes de retomar.
-2. Existe `.context/NOW.md` com status `em-progresso`?
-   → leia o NOW + a última entrada do LOG → confira contra `git status`
-   e os artefatos reais. Divergência? Re-valide a etapa; nunca retome cego.
-   Sem divergência? Execute o "próximo passo imediato".
-3. Nada existe → toda task nova começa em `conter` (classificação, §4).
+1. Is there a `.context/pending-human.md` with `because:` filled?
+   → run `capture-human` before any task. The human edit may
+   invalidate the NOW; reconcile before resuming.
+2. Is there a `.context/NOW.md` with status `in-progress`?
+   → read the NOW + the last LOG entry → check against `git status`
+   and real artifacts. Divergence? Re-validate the step; never resume blind.
+   No divergence? Execute the "immediate next step".
+3. Nothing exists → every new task starts at `contain` (classification, §4).
 
-## 2. Leis de engenharia
+## 2. Engineering laws
 
-1. **Unidade coesa**: um arquivo = um conceito = um motivo para
-   mudar. Se o nome do arquivo não é o nome do único conceito dele, ele faz
-   coisa demais. Guia: 50–150 linhas.
-2. **DRY**: cada conhecimento tem UMA representação autoritativa.
-   Catálogo aponta; nunca duplica.
-3. **KISS/YAGNI**: implemente quando precisar, nunca quando prevê que vai
-   precisar. Sem abstração não pedida; stdlib antes de custom; dependência
-   nova exige justificativa no LOG.
-4. **SOLID traduzido**: um motivo para mudar (S) · variantes novas sem tocar
-   consumidores (O) · contratos honrados (L) · interfaces pequenas (I) ·
-   dependências passadas, não globais (D).
-5. **Doc obrigatória** : toda unidade tem `.md` de contexto com
-   vínculo às ADRs. Unidade sem doc ou doc sem unidade = commit bloqueado.
-6. **Bug = causa raiz**: grep todo caller antes de tocar. Patch no sintoma
-   deixa o irmão quebrado.
+1. **Cohesive unit**: one file = one concept = one reason to
+   change. If the file's name isn't the name of its single concept, it does
+   too much. Guide: 50–150 lines.
+2. **DRY**: every piece of knowledge has ONE authoritative representation.
+   The catalog points; it never duplicates.
+3. **KISS/YAGNI**: implement when you need it, never when you predict you
+   will. No unprompted abstraction; stdlib before custom; a new dependency
+   demands justification in the LOG.
+4. **SOLID translated**: one reason to change (S) · new variants without
+   touching consumers (O) · honored contracts (L) · small interfaces (I) ·
+   dependencies passed in, not global (D).
+5. **Mandatory doc**: every unit has a context `.md` linked to
+   ADRs. Unit without doc or doc without unit = commit blocked.
+6. **Bug = root cause**: grep every caller before touching. Symptom
+   patching leaves the sibling broken.
 
-## 3. Skills — taxonomia e visibilidade
+## 3. Skills — taxonomy and visibility
 
-| Camada | Quem conhece | Conteúdo |
-| agent-skills (9, fixas) | sempre carregadas | clarificar, decompor, modelar-dominio, catalogar, implementar, verificar-objetivo, conter, capturar-humano, auditar |
-| implements-skills | **só `implementar`**, via IMPLEMENTS-CATALOG.md | varia por projeto: dialeto, testes, padrões |
-| platform-skills | só quando a task é de deploy | vercel, cloudflare, … |
+| Layer | Who knows | Content |
+| agent-skills (9, fixed) | always loaded | clarify, decompose, model-domain, catalog, implement, verify-objective, contain, capture-human, audit |
+| implements-skills | **only `implement`**, via IMPLEMENTS-CATALOG.md | varies per project: dialect, tests, patterns |
+| platform-skills | only for deploy tasks | vercel, cloudflare, … |
 
-**Lei da visibilidade**: `implementar` é a ÚNICA porta para implements-skills.
-Nenhuma outra skill — nem este arquivo — conhece uma única delas. A seleção de
-cada execução é registrada no LOG com justificativa (ausência também:
-"nenhuma aplicável porque…").
+**Visibility law**: `implement` is the ONLY gateway to implements-skills.
+No other skill — not even this file — knows a single one. The selection of
+each execution is recorded in the LOG with rationale (absence too:
+"none applicable because…").
 
-**Critério de classificação**: sobrevive a um repo vazio → agent-skill.
-Precisa de código para existir → implements-skill.
+**Classification criterion**: survives an empty repo → agent-skill.
+Needs code to exist → implements-skill.
 
-## 4. Pipeline e classificação
+## 4. Pipeline and classification
 
-`conter` classifica ANTES de executar:
+`contain` classifies BEFORE executing:
 
-| Classe | Critério | Caminho |
+| Class | Criterion | Path |
 |---|---|---|
-| trivial | diff < 10 linhas, sem mudança de contrato | diff mínimo + 1 linha de LOG. Fim. |
-| média | uma unidade ou um micro | clarificar leve → implementar → verificar-objetivo |
-| grande | muda entendimento, várias unidades, decisão de domínio | clarificar → decompor → (modelar-dominio) → implementar → verificar-objetivo |
+| trivial | diff < 10 lines, no contract change | minimal diff + 1 LOG line. Done. |
+| medium | one unit or one micro | light clarify → implement → verify-objective |
+| large | changes understanding, several units, domain decision | clarify → decompose → (model-domain) → implement → verify-objective |
 
-Toda etapa de média/grande termina com registro context-now (§6). Sem exceção.
-Burocracia em tarefa trivial é o caminho mais curto para ódio ao processo.
+Every medium/large stage ends with a context-now record (§6). No exceptions.
+Bureaucracy on a trivial task is the shortest path to hating the process.
 
-## 5. Verificação — QA-first
+## 5. Verification — QA-first
 
-O **teste do objetivo** é o gate de entrega: como um QA testaria? Comportamento,
-integração, aceitação — com evidência executável (comando + saída no LOG).
-A forma varia por projeto (mora em implements-skills); a exigência é fixa.
+The **objective test** is the delivery gate: how would a QA test it? Behavior,
+integration, acceptance — with executable evidence (command + output in the LOG).
+The form varies per project (it lives in implements-skills); the requirement is fixed.
 
-- Unitário segue TDD à risca, mas é higiene interna.
-- Unitário verde + objetivo quebrado = **REPROVADO**.
-- "Vou validar depois" = onde objetivos vão morrer. Não existe depois.
+- Unit tests follow TDD strictly, but are internal hygiene.
+- Green unit tests + broken objective = **FAILED**.
+- "I'll validate later" is where objectives die. There is no later.
 
-## 6. Protocolo context-now
+## 6. context-now protocol
 
 ```markdown
 
-.context/NOW.md        snapshot, reescrito a cada transição, teto 100 linhas
-.context/log/NNN-*.md  append-only; o passado nunca é reescrito
+.context/NOW.md        snapshot, rewritten at every transition, 100-line ceiling
+.context/log/NNN-*.md  append-only; the past is never rewritten
 
 ```
 
-**Escreve sempre** (via tool de arquivo — não polui a janela), ao fim de toda
-skill de média/grande. **Lê sob demanda**, em 3 gatilhos: (1) cold start com
-NOW em-progresso; (2) pós-compaction ou queda de confiança no estado;
-(3) auditoria ou escolha de rota, via catálogo de objetivos.
+**Always written** (via file tools — never pollutes the window), at the end of
+every medium/large skill. **Read on demand**, with 3 triggers: (1) cold start
+with an in-progress NOW; (2) post-compaction or lost confidence in state;
+(3) audit or route choice, via the objectives catalog.
 
-**Regra de linha do NOW**: entra se, e somente se, muda uma decisão futura.
-**Teto como diagnóstico** (ADR-0009): estourou 100 linhas → a decomposição
-falhou. Volte uma etapa; não escreva um NOW maior.
+**NOW line rule**: a line enters if, and only if, it changes a future decision.
+**Ceiling as diagnosis** (ADR-0009): over 100 lines → decomposition
+failed. Go back one step; don't write a bigger NOW.
 
 ## 7. Commits
 
-- Commit que toca unidade toca (ou declara inalterada) a doc dela e as ADRs
-  vinculadas — no mesmo commit (ADR-0004).
-- O agente declara os arquivos que vai tocar em `.context/touched`;
-  `hooks/pre-commit` compara contra o staged.
-- Divergência (arquivo fora do fluxo) exige `.context/pending-human.md`
-  preenchido: `porque` + `conceito` (ADR-0007). Sem isso, commit bloqueado.
-  Fast path do gate: lockfiles e `.md` sem frontmatter de unidade → basta
-  `porque`. `capturar-humano` expande o pending em entrada completa do LOG
-  na sessão seguinte.
+- A commit that touches a unit touches (or declares unchanged) its doc and
+  the linked ADRs — in the same commit (ADR-0004).
+- The agent declares the files it will touch in `.context/touched`;
+  `hooks/pre-commit` compares against staged.
+- Divergence (file out of flow) requires `.context/pending-human.md`
+  filled: `because` + `concept` (ADR-0007). Without it, commit blocked.
+  Gate fast path: lockfiles and `.md` files without unit frontmatter →
+  `because` alone suffices. `capture-human` expands the pending into a
+  full LOG entry in the next session.
 
 ```markdown
 
-As unidades, ADRs e skills deste repo estão indexadas em CATALOG.md e ADR-CATALOG.md. Consulte-os; não os duplique aqui.
+This repo's units, ADRs and skills are indexed in CATALOG.md and ADR-CATALOG.md. Consult them; do not duplicate them here.
 
 ```

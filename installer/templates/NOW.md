@@ -1,17 +1,17 @@
 # NOW
-objetivo: bootstrap do sistema no projeto
-etapa: instalação concluída
-passo: esqueleto plantado; primeiro commit e primeira task pendentes
-status: em-progresso
+objective: bootstrap the system into this project
+stage: installation complete
+step: skeleton planted; first commit and first task pending
+status: in-progress
 
-## Entendimento atual
-Sistema instalado via installer do meta-repo (ADR-0011 de lá): leis
-(AGENTS.md), gate pre-commit, catálogos zerados, contexto fresco.
-Skills nucleares estão globais no CLI (fonte única no meta-repo).
+## Current understanding
+System installed via the meta-repo's installer (its ADR-0011): laws
+(AGENTS.md), pre-commit gate, zeroed catalogs, fresh context.
+Core skills are global in the CLI (single source in the meta-repo).
 
-## Próximo passo imediato
-Primeiro commit do projeto: git add -A && git commit — os plantados já
-estão declarados em .context/touched. Depois, primeira task via conter.
+## Immediate next step
+Project's first commit: git add -A && git commit — planted files are
+already declared in .context/touched. Then, first task via contain.
 
-## Bloqueios
+## Blockers
 —

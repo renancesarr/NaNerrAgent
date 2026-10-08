@@ -1,82 +1,83 @@
 #!/usr/bin/env bash
-# Instala o sistema NaNerr-agent num projeto-alvo: leis + gate + catálogos
-# zerados + contexto fresco (ADR-0011). Skills ficam globais por CLI —
-# este script NÃO copia skills nem nada do histórico do meta-repo
-# (DELTA_VERSION, IDEIA, BACKLOGS, docs/, LOG) — a whitelist garante.
+# Installs the NaNerr-agent system into a target project: laws + gate +
+# zeroed catalogs + fresh context (ADR-0011). Skills stay global per CLI —
+# this script does NOT copy skills or any meta-repo history
+# (DELTA_VERSION, IDEA, BACKLOGS, docs/, LOG) — the whitelist guarantees.
 set -euo pipefail
 
 META="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TPL="$META/installer/templates"
 
-uso() { echo "uso: installer/install.sh <dir-do-projeto-alvo> [--force]"; exit 1; }
+usage() { echo "usage: installer/install.sh <target-project-dir> [--force]"; exit 1; }
 
-[ $# -ge 1 ] && [ "$1" != "--force" ] || uso
-ALVO="$1"; shift || true
+[ $# -ge 1 ] && [ "$1" != "--force" ] || usage
+TARGET="$1"; shift || true
 FORCE=0
 for a in "$@"; do
   case "$a" in
     --force) FORCE=1 ;;
-    *) uso ;;
+    *) usage ;;
   esac
 done
 
-[ -d "$ALVO" ] || { echo "✋ alvo inexistente: $ALVO"; exit 1; }
-ALVO="$(cd "$ALVO" && pwd)"
-[ "$ALVO" != "$META" ] || { echo "✋ não instale sobre o próprio meta-repo"; exit 1; }
+[ -d "$TARGET" ] || { echo "✋ target not found: $TARGET"; exit 1; }
+TARGET="$(cd "$TARGET" && pwd)"
+[ "$TARGET" != "$META" ] || { echo "✋ do not install over the meta-repo itself"; exit 1; }
 
-# conflitos: só sobrescreve com --force; .context/log/ nunca é destruído
-# (AGENTS.md NÃO está nesta lista: existente é preservado — ver abaixo)
-CONFLITOS=()
+# conflicts: only overwrites with --force; .context/log/ is never destroyed
+# (AGENTS.md is NOT in this list: an existing one is preserved — see below)
+CONFLICTS=()
 for f in CATALOG.md ADR-CATALOG.md IMPLEMENTS-CATALOG.md \
          hooks/pre-commit .context/NOW.md; do
-  if [ -e "$ALVO/$f" ]; then CONFLITOS+=("$f"); fi
+  if [ -e "$TARGET/$f" ]; then CONFLICTS+=("$f"); fi
 done
-if [ "${#CONFLITOS[@]}" -gt 0 ] && [ "$FORCE" -ne 1 ]; then
-  echo "✋ já instalado (ou arquivos existem):"
-  printf '  %s\n' "${CONFLITOS[@]}"
-  echo "use --force para sobrescrever (.context/log/ é preservado)"
+if [ "${#CONFLICTS[@]}" -gt 0 ] && [ "$FORCE" -ne 1 ]; then
+  echo "✋ already installed (or files exist):"
+  printf '  %s\n' "${CONFLICTS[@]}"
+  echo "use --force to overwrite (.context/log/ is preserved)"
   exit 1
 fi
 
-# git: todo o gate depende dele
-if [ ! -d "$ALVO/.git" ]; then
-  git -C "$ALVO" init -b main >/dev/null
-  echo "· git inicializado (main)"
+# git: the whole gate depends on it
+if [ ! -d "$TARGET/.git" ]; then
+  git -C "$TARGET" init -b main >/dev/null
+  echo "· git initialized (main)"
 fi
-git -C "$ALVO" config core.hooksPath hooks
+git -C "$TARGET" config core.hooksPath hooks
 
-# núcleo: AGENTS.md — existente é preservado VERBATIM no final do novo
-# (ADR-0011, emenda 1). Guard: header igual ao do sistema = já mergeado;
-# contencao: re-install não renova leis nem duplica cauda; migrar quando
-# houver upgrade real das leis
-if [ -f "$ALVO/AGENTS.md" ]; then
-  if [ "$(head -1 "$ALVO/AGENTS.md")" != "$(head -1 "$META/AGENTS.md")" ]; then
-    VELHO="$(mktemp)"
-    cp "$ALVO/AGENTS.md" "$VELHO"
-    install -m 644 "$META/AGENTS.md" "$ALVO/AGENTS.md"
-    printf '\n' >> "$ALVO/AGENTS.md"
-    cat "$VELHO" >> "$ALVO/AGENTS.md"
-    rm -f "$VELHO"
+# core copied from the meta-repo's living source
+# AGENTS.md — an existing one is preserved VERBATIM at the end of the new one
+# (ADR-0011, amendment 1). Guard: header equal to the system's = already
+# merged; contencao: re-install does not renew laws nor duplicate the tail;
+# migrate when there is a real law upgrade
+if [ -f "$TARGET/AGENTS.md" ]; then
+  if [ "$(head -1 "$TARGET/AGENTS.md")" != "$(head -1 "$META/AGENTS.md")" ]; then
+    OLD="$(mktemp)"
+    cp "$TARGET/AGENTS.md" "$OLD"
+    install -m 644 "$META/AGENTS.md" "$TARGET/AGENTS.md"
+    printf '\n' >> "$TARGET/AGENTS.md"
+    cat "$OLD" >> "$TARGET/AGENTS.md"
+    rm -f "$OLD"
   fi
 else
-  install -m 644 "$META/AGENTS.md" "$ALVO/AGENTS.md"
+  install -m 644 "$META/AGENTS.md" "$TARGET/AGENTS.md"
 fi
-mkdir -p "$ALVO/hooks"
-install -m 755 "$META/hooks/pre-commit" "$ALVO/hooks/pre-commit"
+mkdir -p "$TARGET/hooks"
+install -m 755 "$META/hooks/pre-commit" "$TARGET/hooks/pre-commit"
 
-# esqueleto zerado (templates)
-install -m 644 "$TPL/CATALOG.md"            "$ALVO/CATALOG.md"
-install -m 644 "$TPL/ADR-CATALOG.md"        "$ALVO/ADR-CATALOG.md"
-install -m 644 "$TPL/IMPLEMENTS-CATALOG.md" "$ALVO/IMPLEMENTS-CATALOG.md"
-mkdir -p "$ALVO/.context/log"
-install -m 644 "$TPL/NOW.md"                "$ALVO/.context/NOW.md"
-install -m 644 "$TPL/pending-human.md"      "$ALVO/.context/pending-human.md"
-install -m 644 "$TPL/touched"               "$ALVO/.context/touched"
-if [ ! -e "$ALVO/.context/log/001-instalacao.md" ]; then
-  sed "s/<DATA>/$(date +%Y-%m-%d)/" "$TPL/log-001-instalacao.md" \
-    > "$ALVO/.context/log/001-instalacao.md"
+# zeroed skeleton (templates)
+install -m 644 "$TPL/CATALOG.md"            "$TARGET/CATALOG.md"
+install -m 644 "$TPL/ADR-CATALOG.md"        "$TARGET/ADR-CATALOG.md"
+install -m 644 "$TPL/IMPLEMENTS-CATALOG.md" "$TARGET/IMPLEMENTS-CATALOG.md"
+mkdir -p "$TARGET/.context/log"
+install -m 644 "$TPL/NOW.md"                "$TARGET/.context/NOW.md"
+install -m 644 "$TPL/pending-human.md"      "$TARGET/.context/pending-human.md"
+install -m 644 "$TPL/touched"               "$TARGET/.context/touched"
+if [ ! -e "$TARGET/.context/log/001-installation.md" ]; then
+  sed "s/<DATE>/$(date +%Y-%m-%d)/" "$TPL/log-001-installation.md" \
+    > "$TARGET/.context/log/001-installation.md"
 fi
 
-echo "✓ sistema instalado em $ALVO"
-echo "  próximo: cd $ALVO && git add -A && git commit -m 'bootstrap: sistema instalado'"
-echo "  (plantados já declarados em .context/touched — o gate deixa passar)"
+echo "✓ system installed in $TARGET"
+echo "  next: cd $TARGET && git add -A && git commit -m 'bootstrap: system installed'"
+echo "  (planted files are already declared in .context/touched — the gate lets it pass)"

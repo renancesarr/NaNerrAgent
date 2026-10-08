@@ -1,68 +1,87 @@
 #!/usr/bin/env bash
-# Teste do objetivo do instalador: alvo temporário REAL, asserts de
-# esqueleto zerado e o primeiro commit do alvo passando pelo gate.
-# Evidência executável (verificar-objetivo) — LOG 010 do meta-repo.
-# Nota BACKLOGS/002: escrito pelo implementador; o merge à dev-ai exige
-# verificação cruzada por outro agente — este script é o insumo dela.
+# Installer's objective test: real temporary target, zeroed-skeleton
+# asserts and the target's first commit flowing through the gate.
+# Executable evidence (verify-objective) — meta-repo LOG 010/013.
+# Note BACKLOGS/002: written by the implementer; merging to dev-ai
+# requires cross-verification by another agent — this script is its input.
 set -euo pipefail
 
 META="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
-FALHAS=0
+FAILS=0
 
 ok()    { echo "PASS: $1"; }
-falha() { echo "FAIL: $1"; FALHAS=$((FALHAS + 1)); }
-check() { # check <descrição> <comando...>
+fail_() { echo "FAIL: $1"; FAILS=$((FAILS + 1)); }
+check() { # check <description> <command...>
   local d="$1"; shift
-  if "$@" >/dev/null 2>&1; then ok "$d"; else falha "$d"; fi
+  if "$@" >/dev/null 2>&1; then ok "$d"; else fail_ "$d"; fi
 }
 
 mkdir -p "$TMP/proj"
 "$META/installer/install.sh" "$TMP/proj" >/dev/null
 
-check "AGENTS.md copiado"              test -f "$TMP/proj/AGENTS.md"
-check "hook executável"                test -x "$TMP/proj/hooks/pre-commit"
-check "CATALOG zerado (sem unidades)"  bash -c "! grep -q '^| skills' '$TMP/proj/CATALOG.md'"
-check "ADR-CATALOG zerado (sem ADRs)"  bash -c "! grep -q '0001' '$TMP/proj/ADR-CATALOG.md'"
-check "sem DELTA_VERSION no alvo"      test ! -e "$TMP/proj/DELTA_VERSION.md"
-check "sem IDEIA no alvo"              test ! -e "$TMP/proj/IDEIA.md"
-check "sem BACKLOGS no alvo"           test ! -e "$TMP/proj/BACKLOGS"
-check "contexto fresco (só log 001)"   bash -c "[ \$(ls '$TMP/proj/.context/log' | wc -l) -eq 1 ]"
-check "git inicializado"              test -d "$TMP/proj/.git"
+check "AGENTS.md copied"               test -f "$TMP/proj/AGENTS.md"
+check "hook executable"                test -x "$TMP/proj/hooks/pre-commit"
+check "CATALOG zeroed (no units)"      bash -c "! grep -q '^| ' '$TMP/proj/CATALOG.md' | grep -v Unidade; true; [ \$(grep -c '^| ' '$TMP/proj/CATALOG.md') -le 1 ]"
+check "ADR-CATALOG zeroed (no ADRs)"   bash -c "[ \$(grep -c '^| ' '$TMP/proj/ADR-CATALOG.md') -le 1 ]"
+check "no DELTA_VERSION in target"     test ! -e "$TMP/proj/DELTA_VERSION.md"
+check "no IDEA in target"              test ! -e "$TMP/proj/IDEA.md"
+check "no BACKLOGS in target"          test ! -e "$TMP/proj/BACKLOGS"
+check "fresh context (log 001 only)"   bash -c "[ \$(ls '$TMP/proj/.context/log' | wc -l) -eq 1 ]"
+check "git initialized"                test -d "$TMP/proj/.git"
 check "core.hooksPath=hooks"           bash -c "[ \"\$(git -C '$TMP/proj' config --get core.hooksPath)\" = hooks ]"
-check "touched declara os plantados"   grep -q '^AGENTS.md$' "$TMP/proj/.context/touched"
+check "touched declares planted"       grep -q '^AGENTS.md$' "$TMP/proj/.context/touched"
 
-# o teste do objetivo de verdade: o 1º commit do alvo flui pelo gate
+# the real objective test: the target's 1st commit flows through the gate
 if git -C "$TMP/proj" add -A && \
-   git -C "$TMP/proj" commit -m "bootstrap: sistema instalado" >/dev/null 2>&1; then
-  ok "primeiro commit do alvo passou pelo gate"
+   git -C "$TMP/proj" commit -m "bootstrap: system installed" >/dev/null 2>&1; then
+  ok "target's first commit passed the gate"
 else
-  falha "primeiro commit do alvo passou pelo gate"
+  fail_ "target's first commit passed the gate"
 fi
 
-# idempotência: re-install sem --force aborta; com --force passa e preserva log
+# idempotency: re-install without --force aborts; with --force passes and preserves log
 if "$META/installer/install.sh" "$TMP/proj" >/dev/null 2>&1; then
-  falha "re-install sem --force deve abortar"
+  fail_ "re-install without --force must abort"
 else
-  ok "re-install sem --force aborta"
+  ok "re-install without --force aborts"
 fi
-check "--force sobrescreve"            "$META/installer/install.sh" "$TMP/proj" --force
-check "log/001 preservado no --force"  bash -c "[ \$(ls '$TMP/proj/.context/log' | wc -l) -eq 1 ]"
+check "--force overwrites"             "$META/installer/install.sh" "$TMP/proj" --force
+check "log/001 preserved on --force"   bash -c "[ \$(ls '$TMP/proj/.context/log' | wc -l) -eq 1 ]"
 
-# AGENTS.md pré-existente: preservado no final, leis no topo, sem duplicar
+# pre-existing AGENTS.md: preserved at the end, laws on top, no duplication
 mkdir -p "$TMP/proj2"
-printf '# Regras do meu projeto\nconteudo-proprio-do-projeto\n' > "$TMP/proj2/AGENTS.md"
+printf '# My project rules\nproject-own-content\n' > "$TMP/proj2/AGENTS.md"
 "$META/installer/install.sh" "$TMP/proj2" >/dev/null
-check "AGENTS.md alvo preservado no final"   bash -c "tail -1 '$TMP/proj2/AGENTS.md' | grep -q 'conteudo-proprio'"
-check "leis do sistema no topo do AGENTS.md" bash -c "head -3 '$TMP/proj2/AGENTS.md' | grep -q 'AGENTS.md'"
+check "target AGENTS.md preserved at end"  bash -c "tail -1 '$TMP/proj2/AGENTS.md' | grep -q 'project-own-content'"
+check "system laws on top of AGENTS.md"    bash -c "head -3 '$TMP/proj2/AGENTS.md' | grep -q 'AGENTS.md'"
 "$META/installer/install.sh" "$TMP/proj2" --force >/dev/null
-check "re-install não duplica a cauda"       bash -c "[ \$(grep -c 'conteudo-proprio' '$TMP/proj2/AGENTS.md') -eq 1 ]"
+check "re-install does not duplicate tail" bash -c "[ \$(grep -c 'project-own-content' '$TMP/proj2/AGENTS.md') -eq 1 ]"
+
+# gate via because: (pending-human with the why filled)
+mkdir -p "$TMP/proj3"
+"$META/installer/install.sh" "$TMP/proj3" >/dev/null
+git -C "$TMP/proj3" add -A
+git -C "$TMP/proj3" commit -m "bootstrap" >/dev/null 2>&1
+echo "test" > "$TMP/proj3/out-of-flow.txt"
+git -C "$TMP/proj3" add out-of-flow.txt
+if git -C "$TMP/proj3" commit -m "should block" >/dev/null 2>&1; then
+  fail_ "gate blocks out-of-flow without because"
+else
+  ok "gate blocks out-of-flow without because"
+fi
+printf 'because: test\nconcept: x\n' > "$TMP/proj3/.context/pending-human.md"
+if git -C "$TMP/proj3" commit -m "should pass" >/dev/null 2>&1; then
+  ok "gate passes with because filled"
+else
+  fail_ "gate passes with because filled"
+fi
 
 echo "---"
-if [ "$FALHAS" -eq 0 ]; then
-  echo "TUDO VERDE (0 falhas)"
+if [ "$FAILS" -eq 0 ]; then
+  echo "ALL GREEN (0 failures)"
 else
-  echo "$FALHAS FALHAS"
+  echo "$FAILS FAILURES"
   exit 1
 fi
