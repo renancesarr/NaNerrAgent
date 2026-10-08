@@ -25,4 +25,5 @@ Skills are self-documenting — each one's SKILL.md is its context doc.
 | IMPLEMENTS-CATALOG.md | empty in bootstrap — meta-repo has no dialect of its own |
 | BACKLOGS/001-goal-structure.md | backlog: goal/ folder with macro/micro tree — IMPLEMENTED (goal/001, ADR-0012) |
 | BACKLOGS/002-multiagent-flow.md | backlog: dev-ai-* branches per agent + cross-verification |
+| BACKLOGS/003-brainstorm-skill.md | backlog: brainstorm skill — raw idea → IDEA.md + goal/ via funnel questions |
 | goal/ | persistent objectives tree: goals → (macros) → micros with mutable status (ADR-0012) |
