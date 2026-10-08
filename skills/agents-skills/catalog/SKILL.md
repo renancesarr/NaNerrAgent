@@ -86,7 +86,7 @@ doc date < last commit date on the unit = drift.
 - **Delete**: remove doc, remove line, **sweep ADR-CATALOG for pointers to
   the unit** — found any → trigger `model-domain` (re-link or orphan).
 - **Rename/move**: move the doc along, update path in CATALOG and in linked
-  ADRs, adjust references in NOW/PLAN. An expensive rename is the price of
+  ADRs, adjust references in NOW/goal/. An expensive rename is the price of
   a trustworthy index — record it in the LOG and move on.
 
 ## Brownfield — catalog-on-touch

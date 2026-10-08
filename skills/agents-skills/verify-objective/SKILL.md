@@ -65,7 +65,7 @@ the thing. Test against the request, not against the sum of parts.
    |---|---|
    | bug in the code | fix (implement scope), re-run the gate |
    | mechanical bug in the test | fix the test, re-run |
-   | wrong expectation | that's a SPEC CHANGE: edit PLAN + record in the LOG |
+   | wrong expectation | that's a SPEC CHANGE: edit the micro's goal/ file + record in the LOG |
    Changing the expected silently to make the test pass is how every gate rots.
 6. **Same criterion fails for the 3rd time → STOP.** The problem is
    upstream: bad spec, wrong approach, micro too large. Go back to
@@ -75,10 +75,11 @@ the thing. Test against the request, not against the sum of parts.
    the delivery against IT. **A delegated assumption that turned structural**
    is exposed at delivery: "you delegated X; we built on X; confirm". The
    loop that clarify opened, this closes.
-8. Green → PLAN: `done` — a status only this skill writes (implement marks
-   `implemented`; execution doesn't attest delivery). Failed → NOW returns
-   to the micro in rework. The gate runs on real state: failure becomes a
-   fix commit — honest history, no hidden commit.
+8. Green → the micro's goal/ file: frontmatter `status: done` — a status
+   only this skill writes (implement marks `implemented`; execution doesn't
+   attest delivery). Failed → NOW returns to the micro in rework. The gate
+   runs on real state: failure becomes a fix commit — honest history, no
+   hidden commit.
 9. Record the transition (AGENTS.md §6): commands, expected/got, verdict.
 
 ## Diagnosis: absence of failures is a symptom
@@ -104,4 +105,4 @@ of honest verification. `audit` checks this.
 - [ ] Every failure routed (code/test/spec) — zero expected changed silently.
 - [ ] No criterion passed the 3rd failure without stopping and diagnosing.
 - [ ] Objective-gate tested against the canonical prompt; delegated assumptions exposed.
-- [ ] `done` in the PLAN was written by this skill — and nothing else.
+- [ ] `done` in the micro's goal/ file was written by this skill — and nothing else.

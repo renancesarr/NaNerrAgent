@@ -1,24 +1,29 @@
 # NOW
-objective: promote full system to dev-ai and main
-stage: done (LOG 014)
-step: user authorized promotion; merges executed
+objective: implement BACKLOGS/001 (goal/ structure)
+stage: done (LOG 015)
+step: goal/ live, PLAN.md retired, skills amended — awaiting cross-verification
 status: done
 
 ## Current understanding
-All branches converge: main = dev-ai = dev-ai-zcode content (English
-system, installer v3, ADR-0011, 14 LOG entries). Promotion authorized by
-the human (release gate for main); cross-verification deviation recorded
-in LOG 014 (verifier = human this time).
+goal/ is the persistent home of objectives (ADR-0012): goal/NNN-slug/
+with GOAL.md (map + success metric) and micro files (spec + mutable
+status frontmatter; `done` written only by verify-objective). Macro level
+optional. First instance: goal/001-goal-structure (this very task —
+dogfood). PLAN.md retired with zero living references.
+
+## Immediate next step (active micro path)
+goal/001-goal-structure/003-dogfood-and-verify.md — status: done;
+goal map all-done. Next: cross-verification of feature/goal-structure,
+then user picks: audit findings 1–2, BACKLOGS/002 remainder, or a real
+task in a target project.
 
 ## Decisions that change the future
-- main is now the reference project: everything installed elsewhere comes
-  from here
-- Promotion deviation recorded: verifier = human (explicit authorization)
-- Pending: audit findings 1–2; BACKLOGS/001 (goal/); rest of 002 (branch
-  gate in hook, micro claim, AGENTS amendment)
-
-## Immediate next step
-First real task in a target project, or implement BACKLOGS/001.
+- goal ≡ checkpoint (renamed); no new skill; done = frontmatter status;
+  goal files are units (gate covers them via touched)
+- Medium tasks: one goal, one micro, no macro (minimal mode)
+- Pending: audit findings 1–2; BACKLOGS/002 remainder (branch gate in
+  hook, micro claim via owner:); promotion of this feature awaits
+  cross-verification (LOG 015 is the verifier's input)
 
 ## Blockers
 —

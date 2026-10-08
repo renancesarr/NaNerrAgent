@@ -1,6 +1,6 @@
 ---
 id: 001
-status: backlog
+status: implemented
 type: future-implementation
 target-units: [skills/agents-skills/decompose, CATALOG.md, .context/NOW.md]
 created: 2026-10-08
