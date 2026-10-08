@@ -1,27 +1,24 @@
 # NOW
-objetivo: instalador de projeto (feature/instalador)
-etapa: implementação concluída (LOG 010)
-passo: 15/15 PASS; merge à dev-ai-zcode pendente neste passo
-status: em-progresso
+objetivo: primeira instalação real concluída
+etapa: concluída (LOG 011)
+passo: instalador validado em produção; alvo anônimo por política
+status: concluído
 
 ## Entendimento atual
-Instalador pronto (ADR-0011): whitelist copia AGENTS.md + hook da fonte
-viva e planta catálogos/.context zerados via templates; skills ficam
-globais por CLI. Idempotente (--force preserva .context/log). O touched
-do alvo nasce declarando os plantados — o 1º commit dele já flui pelo
-gate. Teste do objetivo: 15/15 PASS em alvo temporário real.
+Sistema roda em ≥1 projeto real (identidade não registrada — política
+nova). Instalador validado (15/15 no teste + produção). No meta: ADR-0011,
+fluxo feature/* batizado, gate ativo, dev-ai-zcode publicada.
 
 ## Decisões que mudam o futuro
-- ADR-0011: esqueleto copiado por projeto; skills globais por máquina
-- Uso: installer/install.sh <dir-do-projeto-alvo> [--force]
-- Primeiro uso do fluxo feature/* do BACKLOGS/002 (branch por feature,
-  merge do autor à dev-ai-<agente>, verificação cruzada p/ dev-ai)
-- Pendências: achados 1–2 da auditoria; resto do BACKLOGS/002 (hook de
-  branch, claim, AGENTS emendado); BACKLOGS/001 (goal/)
+- Meta-repo NÃO registra identidade de alvos (path, stack, dados) —
+  registros dizem só "instalação funcionou"
+- Primeiro commit do alvo = só plantados; resto é decisão do dono
+- Pendências: achados 1–2 da auditoria; BACKLOGS/001; resto do 002;
+  verificação cruzada do instalador p/ dev-ai (LOG 010 é o insumo)
 
 ## Próximo passo imediato
-Merge feature/instalador → dev-ai-zcode (merge do autor, --no-ff),
-deletar a feature, push. Subir à dev-ai SÓ com verificador cruzado.
+Ajuste do instalador para AGENTS.md existente + política de anonimato
+formalizada (próxima entrada do LOG).
 
 ## Bloqueios
 —

@@ -1,15 +1,3 @@
-installer/install.sh
-installer/test-install.sh
-installer/templates/CATALOG.md
-installer/templates/ADR-CATALOG.md
-installer/templates/IMPLEMENTS-CATALOG.md
-installer/templates/NOW.md
-installer/templates/pending-human.md
-installer/templates/touched
-installer/templates/log-001-instalacao.md
-docs/adr/0011-instalador-esqueleto-vs-skills-globais.md
-ADR-CATALOG.md
-CATALOG.md
+.context/log/011-primeira-instalacao-real.md
 .context/NOW.md
 .context/touched
-.context/log/010-instalador.md
