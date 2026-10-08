@@ -1,0 +1,9 @@
+AGENTS.md
+CATALOG.md
+ADR-CATALOG.md
+IMPLEMENTS-CATALOG.md
+hooks/pre-commit
+.context/NOW.md
+.context/pending-human.md
+.context/touched
+.context/log/001-installation.md

@@ -1,9 +1,9 @@
 # IMPLEMENTS-CATALOG
 
-Vazio no bootstrap — o meta-repo não tem dialeto de implementação próprio.
+Empty in bootstrap — the meta-repo has no implementation dialect of its own.
 
-Skills de dialeto/testes/padrões entram aqui quando o primeiro projeto-alvo
-definir o que varia (AGENTS.md §3; ADR-0002). Formato de cada entrada:
+Dialect/testing/pattern skills enter here when the first target project
+defines what varies (AGENTS.md §3; ADR-0002). Entry format:
 
-| skill | usar quando | caminho |
+| skill | use when | path |
 |---|---|---|
