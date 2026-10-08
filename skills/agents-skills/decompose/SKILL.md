@@ -1,9 +1,9 @@
 ---
 name: decompose
 description: >
-  Splits the clarified objective into checkpoint → macro → micro-objective,
-  each micro with a verifiable spec and a pre-defined objective test.
-  Creates and maintains the PLAN. Use after clarify on large tasks; in
+  Splits the clarified objective into goal → (macro) → micro-objective
+  inside the persistent goal/ tree, each micro with a verifiable spec and
+  a pre-defined objective test. Use after clarify on large tasks; in
   minimal mode on medium tasks. Do not use on trivial tasks.
 ---
 
@@ -16,17 +16,36 @@ The rework of a boundary moved mid-way is the cost this skill avoids.
 ## Artifacts — distinct roles (do not confuse)
 | Artifact | Mutable? | Role | Ceiling |
 |---|---|---|---|
-| `.context/NOW.md` | rewritten | where I AM (1 micro + next step) | 100 lines |
-| `.context/PLAN.md` | mutable | the whole MAP: micros, dependencies, specs, status | — |
+| `goal/NNN-slug/GOAL.md` | mutable | the objective: success metric + map of micros/macros with status | 100 lines |
+| `goal/NNN-slug/NNN-slug.md` (micro) | mutable | one micro's spec + `status` frontmatter | 60 lines |
+| `.context/NOW.md` | rewritten | where I AM (active micro path + next step) | 100 lines |
 | `.context/log/NNN-*.md` | **never** | what HAPPENED, in order | 60 lines/entry |
 
-A micro's spec lives in the PLAN. The LOG records the transition; the NOW points.
-Specs evolve (criteria completed, adjustments) — that is why they do not live in the LOG.
+The spec of a micro lives in its goal/ file. The LOG records transitions
+and pointers; the NOW points at the active micro's path. Specs evolve
+(criteria checked, adjustments) — that is why they live in goal/, not in
+the append-only LOG (ADR-0012).
 
 ## Structure
-- **checkpoint** — macro-deliverable (weeks). Exists only in large tasks.
-- **macro-objective** — component of a checkpoint (1–2 weeks).
-- **micro** — atomic task: one session, one diff, one LOG entry.
+- **goal** — the persistent objective (was "checkpoint"; renamed by
+  ADR-0012): a folder `goal/NNN-slug/` with GOAL.md. Survives sessions.
+- **macro** — component of a goal (1–2 weeks). OPTIONAL: a single-
+  component goal puts its micros directly under the goal folder; create
+  `macro/NNN-slug/MACRO-GOAL.md` only when the goal has multiple
+  components worth naming (YAGNI applied to the tree itself).
+- **micro** — atomic task: one session, one diff, one LOG entry. A file
+  `NNN-slug.md` with frontmatter.
+
+## Micro frontmatter — status is the contract
+```markdown
+---
+status: pending | in-progress | implemented | done | abandoned
+owner: <agent>        # optional; the BACKLOGS/002 claim (dono:)
+---
+```
+- `done` is written ONLY by verify-objective (execution doesn't attest
+  delivery).
+- `abandoned` releases a claimed micro (BACKLOGS/002).
 
 ## Micro sizing rules (verifiable, not "hours")
 A micro is right-sized when ALL hold:
@@ -37,22 +56,18 @@ A micro is right-sized when ALL hold:
 
 ## Process
 1. Input: the canonical prompt from `clarify`.
-2. **Medium task** → minimal mode: ONE spec, no checkpoint, no macro.
+2. **Medium task** → minimal mode: ONE goal with ONE micro file, no macro.
    Hierarchy for a single micro is ceremony (YAGNI applied to decomposition).
-3. **Large task** → list checkpoints → break into macros → break into micros.
-4. Write the PLAN:
+3. **Large task** → create `goal/NNN-slug/` (next NNN): GOAL.md with
+   objective, success metric and the map; break into macros ONLY if
+   multiple named components exist; break into micro files.
+4. Micro spec template:
 
 ```markdown
-# PLAN — [canonical objective, 1 line]
-
-## Map
-| # | micro | depends on | status | objective test (1 line) |
-|---|-------|---------|--------|---------------------------|
-| 1 | ...   | —       | pending| ... |
-| 2 | ...   | 1       | pending| ... |
-
-## Specs
-### [1] name
+---
+status: pending
+---
+# NNN — [name]
 objective: [1–2 lines]
 criteria: [ ] ... (≤5, each independently verifiable)
 dependencies: [— or micros]
@@ -61,19 +76,19 @@ inherited assumptions: [unvalidated ones from clarification, if any]
 objective test: [how a QA would validate THIS micro — command/observation]
 ```
 
-5. **Spec granularity**: full map always; detailed specs only for the next
-   2–3 micros; draft (objective + test, 1 line) for distant ones. A detailed
-   spec for a distant micro is fiction — earlier micros invalidate its
-   assumptions. Detail when its turn comes.
+5. **Spec granularity**: full map in GOAL.md always; detailed specs only
+   for the next 2–3 micros; draft (objective + test, 1 line) for distant
+   ones. A detailed spec for a distant micro is fiction — earlier micros
+   invalidate its assumptions. Detail when its turn comes.
 6. Prioritize: value first, risk early (the micro that can reveal the plan
    is wrong comes before any polish), dependencies respected.
 7. **The iron rule**: if you cannot write a micro's `objective test`, the
    micro is ill-defined — you don't know what "done" is. Redefine the
    micro; never leave the field empty. `verify-objective` receiving an
    empty field sends it back here. The loop is designed to come back.
-8. Record the transition. LOG: `checkpoints/macros created`, `N micros in
-   the map`, `first micro + why this order`. NOW: first micro as the
-   "immediate next step", pointing at the PLAN.
+8. Record the transition. LOG: `goal NNN created`, `N micros in the map`,
+   `first micro + why this order`. NOW: the active micro's PATH as the
+   "immediate next step". CATALOG: one line per goal folder (catalog).
 
 ## Reverse diagnosis (ADR-0008/0009)
 | Symptom (found later) | Cause here | Fix |
@@ -81,6 +96,7 @@ objective test: [how a QA would validate THIS micro — command/observation]
 | NOW exceeds the 100-line ceiling | micro too large | go back, split the current micro |
 | implement produces diff outside the spec | ill-defined micro (diff sentence impossible) | rewrite the spec before proceeding |
 | verify-objective "invents" a test | empty or vague field in the spec | the fault is here, not there |
+| GOAL.md exceeds the ceiling | goal doing two goals' work | split into two goal folders |
 
 ## Anti-rationalization
 | Excuse | Response |
@@ -89,10 +105,11 @@ objective test: [how a QA would validate THIS micro — command/observation]
 | "I'll decompose as I go" | A boundary moved mid-way re-costs everything that already touched it. The full map exists to see dependencies BEFORE. |
 | "Specs are bureaucracy" | The spec is the QA gate's contract. Without it, whoever fixes defines what "passed" means. |
 | "I'll detail every spec now" | A detailed spec for a distant micro is planning fiction. Full map, just-in-time detail. |
+| "Every goal needs macros" | Macro is optional by design (ADR-0012). Naming a single component is ceremony. |
 
 ## Verification
 - [ ] Every micro in the map has: name, dependency, objective test (even as draft).
 - [ ] Detailed specs (next 2–3) have ≤5 criteria and a filled objective test.
-- [ ] Medium task produced ONE spec with no hierarchy. Large task has a full map.
-- [ ] PLAN.md created; NOW points to it and carries only the first micro.
+- [ ] Medium task produced ONE goal with ONE micro, no macro. Large task has a full map.
+- [ ] GOAL.md created with success metric; NOW carries the active micro's PATH.
 - [ ] No micro in the map embeds a domain decision (if it does, the large pipeline requires `model-domain` first).

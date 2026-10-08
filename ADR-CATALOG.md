@@ -13,8 +13,10 @@
 | 0009 | accepted | NOW ceiling as decomposition diagnosis | protocol, decompose |
 | 0010 | accepted | DDD-lite: ubiquitous language yes, formal ceremony no | model-domain |
 | 0011 | accepted | Installer: skeleton per project, global skills; target AGENTS.md preserved at end; anonymous targets | installer/ |
+| 0012 | accepted | Objectives live in goal/ (persistent, mutable status); PLAN.md retired; macro level optional | goal/, decompose, implement, verify-objective |
 
-Full ADR files: 0001 (canonical example) and 0011 (installer); the rest
-live in this index until they pass the promotion test (model-domain,
-granularity). Full-file names: 0001-cohesive-unit.md,
-0011-installer-skeleton-vs-global-skills.md.
+Full ADR files: 0001 (canonical example), 0011 (installer) and 0012
+(goal/); the rest live in this index until they pass the promotion test
+(model-domain, granularity). Full-file names: 0001-cohesive-unit.md,
+0011-installer-skeleton-vs-global-skills.md,
+0012-goal-folder-persistent-objectives.md.

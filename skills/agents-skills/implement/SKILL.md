@@ -1,11 +1,11 @@
 ---
 name: implement
 description: >
-  Executes a micro-objective from the PLAN: consults IMPLEMENTS-CATALOG.md,
+  Executes a micro-objective from goal/ (its spec file): consults IMPLEMENTS-CATALOG.md,
   selects 1–3 implements-skills for the task, writes the code, triggers
   catalog before the commit and declares touched files for the gate. It is
   the ONLY gateway to implements-skills. Use for all code execution — from
-  a medium task or a PLAN micro. Do not use without a spec (it does not
+  a medium task or a goal/ micro. Do not use without a spec (it does not
   execute what is undefined).
 ---
 
@@ -26,13 +26,13 @@ docs and ADRs that sustain it.
 
 ## Internal sequence (order matters)
 ```
-1. take the micro from the PLAN
+1. take the micro from goal/ (path in the NOW)
 2. validate spec against real state (below)
 3. route implements
 4. write code (with implements loaded)
 5. TDD on units (form defined by the chosen implements)
 6. trigger catalog (touched units)
-7. update PLAN + NOW + LOG
+7. update goal/ status + NOW + LOG
 8. commit (with touched declared)
 ```
 
@@ -42,8 +42,8 @@ The spec was written at an earlier moment; the world may have changed:
 - Was an ADR created/amended since the spec?
 - Does `git status` show changes unrecorded in the NOW?
 
-Divergence found → adjust the spec BEFORE writing code (edit the PLAN,
-the LOG records the adjustment and why). A spec is the best understanding
+Divergence found → adjust the spec BEFORE writing code (edit the micro's
+goal/ file, the LOG records the adjustment and why). A spec is the best understanding
 of its time, not scripture — but code written against a stale spec is
 double rework: the wrong code + the `verify-objective` finding that
 sends everything back.
@@ -84,9 +84,10 @@ Every touched unit needs synced docs before the commit.
 `catalog` does the work; here it's enough to guarantee it runs BEFORE
 the commit — never after. Fixed sequence: code → catalog → commit.
 
-## Step 7 — update PLAN + NOW + LOG
-- **PLAN**: micro marked `done` (or `in-progress` if it broke mid-way).
-- **NOW**: rewritten — next micro as the "immediate next step";
+## Step 7 — update goal/ + NOW + LOG
+- **goal/**: the micro's frontmatter `status: implemented` (or
+  `in-progress` if it broke mid-way) — `done` belongs to verify-objective.
+- **NOW**: rewritten — next micro's path as the "immediate next step";
   if it broke mid-way, the partial state (what's done, what's missing,
   exactly where it stopped).
 - **LOG**: entry with `micro`, `implements + why`, `diff summary`
@@ -95,7 +96,7 @@ the commit — never after. Fixed sequence: code → catalog → commit.
 
 ## Step 8 — commit
 1. Declare the files the commit will contain in `.context/touched`
-   (units + docs + PLAN + NOW + LOG — everything going into the commit).
+   (units + docs + goal/ + NOW + LOG — everything going into the commit).
 2. Commit. The pre-commit compares staged vs touched (AGENTS.md §7).
 3. Divergence = block. If the agent forgot to declare something,
    adjust `touched` and re-commit. Do not circumvent the gate.
@@ -114,7 +115,7 @@ code that looks done.
 | Excuse | Response |
 |---|---|
 | "I'll load all implements, it's safer" | That's ECC-mode: everything always available = agent always lost. Explicit selection is the design. |
-| "Stale spec, I'll follow it anyway" | Code against a stale spec = double rework. Adjusting the spec costs 2 lines in the PLAN. |
+| "Stale spec, I'll follow it anyway" | Code against a stale spec = double rework. Adjusting the spec costs 2 lines in the micro's goal/ file. |
 | "Catalog after the commit" | The gate blocks it. And if it didn't: doc later is doc never. |
 | "I'll finish the micro, it's almost there" | Almost = it isn't. Partial state in the NOW is recoverable; broken-looking-done is not. |
 | "One extra implement won't hurt" | Every loaded skill is context competing with the task. If it wasn't selected with a why, it doesn't enter. |
@@ -124,5 +125,5 @@ code that looks done.
 - [ ] Implements selection recorded with per-skill rationale (or "none because...").
 - [ ] Every unit in the commit has synced docs (catalog ran before the commit).
 - [ ] `.context/touched` declares everything committed (the gate passes).
-- [ ] NOW rewritten: next micro or explicit partial state.
+- [ ] NOW rewritten: next micro's path or explicit partial state.
 - [ ] LOG has an entry with micro, implements, diff summary, sync.
