@@ -18,7 +18,8 @@ else
 fi
 
 if [ -n "$DIVERGENT" ]; then
-  if [ -f "$PENDING" ] && grep -q '^porque: .+' "$PENDING"; then
+  # -E: em BRE o '+' é literal e '.+' nunca casa (bug achado no 1º dogfood)
+  if [ -f "$PENDING" ] && grep -Eq '^porque: .+' "$PENDING"; then
     exit 0   # porquê presente; capturar-humano expande na próxima sessão
   fi
   echo "✋ Fora do fluxo do agente:"
