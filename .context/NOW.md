@@ -1,14 +1,15 @@
 # NOW
-objetivo: topologia de branches multiagente ativa
-etapa: concluída (LOG 008)
-passo: dev-ai + dev-ai-{codex,opencode,zcode} criadas; ZCode em dev-ai-zcode
+objetivo: topologia multiagente publicada no origin
+etapa: concluída (LOG 009)
+passo: 5 branches com upstream no origin (SSH)
 status: concluído
 
 ## Entendimento atual
-BACKLOGS/002 implementado PARCIALMENTE: só a topologia. main = estável
-(4a04042, 2 commits à frente do origin), dev-ai = integração (igual à
-main), dev-ai-zcode recebe o trabalho do ZCode (LOG 008 incluso).
-Branches do Codex e do OpenCode prontas e intocadas.
+BACKLOGS/002 parcial (topologia): main, dev-ai, dev-ai-{codex,opencode,
+zcode} publicadas em origin com tracking. dev-ai = integração ainda em
+4a04042; dev-ai-zcode carrega o livro-razão do ZCode (LOG 008–009),
+aguardando verificação cruzada para subir. Codex/OpenCode: checkout da
+sua branch a partir do origin.
 
 ## Decisões que mudam o futuro
 - Cada agente commita SÓ na sua dev-ai-<agente> (ou feature/* dela)
@@ -18,8 +19,8 @@ Branches do Codex e do OpenCode prontas e intocadas.
 - IDEIA.md = spec autoritativa; DELTA_VERSION.md = histórico (achado 3)
 
 ## Próximo passo imediato
-Trabalhar em dev-ai-zcode; merge à dev-ai só com verificador cruzado
-(Codex/OpenCode/humano). Primeira task real ou resto do BACKLOGS/002.
+Merge de dev-ai-zcode à dev-ai quando houver verificador cruzado
+(Codex/OpenCode/humano); primeira task real; decidir achados 1–2.
 
 ## Bloqueios
 —
