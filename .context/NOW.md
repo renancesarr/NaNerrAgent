@@ -1,28 +1,24 @@
 # NOW
-objetivo: reconciliar fluxos paralelos (auditoria 006 + backlog 002)
-etapa: concluída (LOG 007)
-passo: auditoria commitada (dbbd0b8); backlog 002 registrado e catalogado
-status: concluído
+objective: promote full system to dev-ai and main
+stage: done (LOG 014)
+step: user authorized promotion; merges executed
+status: done
 
-## Entendimento atual
-9 commits no main, remote via SSH. Dois fluxos de agente rodaram em
-paralelo e foram reconciliados sem perda (LOG 007, incidente). Dois
-backlogs aguardam implementação: 001 (pasta goal/) e 002 (fluxo
-multiagente com verificação cruzada).
+## Current understanding
+All branches converge: main = dev-ai = dev-ai-zcode content (English
+system, installer v3, ADR-0011, 14 LOG entries). Promotion authorized by
+the human (release gate for main); cross-verification deviation recorded
+in LOG 014 (verifier = human this time).
 
-## Decisões que mudam o futuro
-- Achado 3 da auditoria 001 APLICADO: IDEIA.md = spec autoritativa;
-  DELTA_VERSION.md = referência histórica no CATALOG
-- Achados 1–2 da auditoria PENDENTES de decisão do usuário:
-  (1) gate exige só porque, não conceito, fora do fast path documentado;
-  (2) teto doc>40 da skill auditar contradiz o guia 50–150 do AGENTS.md
-- BACKLOGS/002: verificador ≠ implementador no gate da dev-ai; claim de
-  micro (dono:) coordena agentes; main = estável promovido pelo humano
-- Colisão 006×006 evidenciou o problema de coordenação que o 002 endereça
+## Decisions that change the future
+- main is now the reference project: everything installed elsewhere comes
+  from here
+- Promotion deviation recorded: verifier = human (explicit authorization)
+- Pending: audit findings 1–2; BACKLOGS/001 (goal/); rest of 002 (branch
+  gate in hook, micro claim, AGENTS amendment)
 
-## Próximo passo imediato
-Usuário decide: corrigir achados 1–2 antes do primeiro uso em repo-alvo?
-(ou implementar BACKLOGS/001/002 primeiro)
+## Immediate next step
+First real task in a target project, or implement BACKLOGS/001.
 
-## Bloqueios
+## Blockers
 —
