@@ -14,6 +14,9 @@ Nothing important lives only in your session memory.
    and real artifacts. Divergence? Re-validate the step; never resume blind.
    No divergence? Execute the "immediate next step".
 3. Nothing exists → every new task starts at `contain` (classification, §4).
+4. Repo has `dev-ai-*` branches and yours isn't checked out?
+   → `git checkout dev-ai-<this-agent>` first (ADR-0014). Agents never
+   share a working tree — that's how LOG 007's collision happened.
 
 ## 2. Engineering laws
 
@@ -100,6 +103,21 @@ failed. Go back one step; don't write a bigger NOW.
   Gate fast path: lockfiles and `.md` files without unit frontmatter →
   `because` alone suffices. `capture-human` expands the pending into a
   full LOG entry in the next session.
+
+## 8. Multi-agent flow (ADR-0014)
+
+- Topology: `main` (stable, promoted by the HUMAN) ← `dev-ai`
+  (integration) ← `dev-ai-<agent>` per agent ← `feature/<slug>`.
+- Agents commit ONLY on their `dev-ai-<agent>` (or features from it).
+- `.context/protected-branches` (opt-in, one branch per line) makes the
+  hook block direct commits on listed branches without the human why.
+- Merge to `dev-ai` requires verifier ≠ implementer (the objective test
+  run by another agent — or the human, as in LOG 014). Merges skip the
+  pre-commit hook by git design; the record lives in the LOG.
+- Micro claim: `owner:` in the micro's goal/ frontmatter, first commit
+  wins; `status: abandoned` releases it (no locks).
+- No `--force` on shared branches; feature branches are deleted after
+  their merge (no zombies).
 
 ```markdown
 

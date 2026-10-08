@@ -15,9 +15,11 @@
 | 0011 | accepted | Installer: skeleton per project, global skills; target AGENTS.md preserved at end; anonymous targets | installer/ |
 | 0012 | accepted | Objectives live in goal/ (persistent, mutable status); PLAN.md retired; macro level optional | goal/, decompose, implement, verify-objective |
 | 0013 | accepted | goal/ is the single authoritative home of objectives; vision docs optional, never duplicates | decompose, goal/, CATALOG.md |
+| 0014 | accepted | Agents commit only on dev-ai-<agent>; protected branches (opt-in file) take verified merges or the human why | hooks/pre-commit, .context/protected-branches, AGENTS.md |
 
-Full ADR files: 0001 (canonical example), 0011 (installer), 0012 and
-0013 (goal/); the rest live in this index until they pass the promotion
-test (model-domain, granularity). Full-file names:
-0001-cohesive-unit.md, 0011-installer-skeleton-vs-global-skills.md,
-0012-goal-folder-persistent-objectives.md, 0013-goals-single-authority.md.
+Full ADR files: 0001 (canonical example), 0011–0014; the rest live in
+this index until they pass the promotion test (model-domain,
+granularity). Full-file names: 0001-cohesive-unit.md,
+0011-installer-skeleton-vs-global-skills.md,
+0012-goal-folder-persistent-objectives.md,
+0013-goals-single-authority.md, 0014-branch-gate-multiagent.md.

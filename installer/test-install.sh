@@ -78,6 +78,35 @@ else
   fail_ "gate passes with because filled"
 fi
 
+# ADR-0014 branch gate: opt-in via .context/protected-branches
+printf 'because:\nconcept:\n' > "$TMP/proj3/.context/pending-human.md"
+echo "test" > "$TMP/proj3/flow.txt"
+git -C "$TMP/proj3" add flow.txt
+printf 'flow.txt\n.context/touched\n' > "$TMP/proj3/.context/touched"
+if git -C "$TMP/proj3" commit -m "unprotected branch: agent flow passes" >/dev/null 2>&1; then
+  ok "unprotected branch: agent flow passes"
+else
+  fail_ "unprotected branch: agent flow passes"
+fi
+printf 'main\n' > "$TMP/proj3/.context/protected-branches"
+echo "test2" > "$TMP/proj3/flow2.txt"
+git -C "$TMP/proj3" add flow2.txt
+printf 'flow2.txt\n.context/touched\n.context/protected-branches\n' > "$TMP/proj3/.context/touched"
+if git -C "$TMP/proj3" commit -m "protected: should block without why" >/dev/null 2>&1; then
+  fail_ "protected branch blocks without why"
+else
+  ok "protected branch blocks without why"
+fi
+printf 'because: human release\nconcept: x\n' > "$TMP/proj3/.context/pending-human.md"
+if git -C "$TMP/proj3" commit -m "protected: passes with why" >/dev/null 2>&1; then
+  ok "protected branch passes with why"
+else
+  fail_ "protected branch passes with why"
+fi
+git -C "$TMP/proj3" merge --no-ff -m "merge: skips pre-commit" HEAD~2 >/dev/null 2>&1 \
+  && ok "merge commit works on protected branch" \
+  || fail_ "merge commit works on protected branch"
+
 echo "---"
 if [ "$FAILS" -eq 0 ]; then
   echo "ALL GREEN (0 failures)"

@@ -21,8 +21,8 @@ Skills are self-documenting — each one's SKILL.md is its context doc.
 | skills/agents-skills/capture-human | converts human edits into LOG knowledge |
 | skills/agents-skills/audit | degradation diagnosis with LOG evidence |
 | hooks/pre-commit | deterministic gate: staged×touched divergence requires a why (ADR-0007) |
-| ADR-CATALOG.md | index of decisions ADR-0001 to ADR-0011 |
+| ADR-CATALOG.md | index of decisions ADR-0001 to ADR-0014 |
 | IMPLEMENTS-CATALOG.md | empty in bootstrap — meta-repo has no dialect of its own |
-| BACKLOGS/002-multiagent-flow.md | backlog: dev-ai-* branches per agent + cross-verification |
+| BACKLOGS/002-multiagent-flow.md | backlog: multiagent flow — IMPLEMENTED (ADR-0014, AGENTS.md §8, branch gate) |
 | BACKLOGS/003-brainstorm-skill.md | backlog: brainstorm skill — raw idea → IDEA.md + goal/ via funnel questions |
 | goal/ | persistent objectives tree: goals → (macros) → micros with mutable status (ADR-0012) |
