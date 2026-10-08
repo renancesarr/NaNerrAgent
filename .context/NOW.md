@@ -1,25 +1,20 @@
 # NOW
-objetivo: backlog da estrutura goal/ registrado
-etapa: concluída (LOG 003)
-passo: BACKLOGS/001 criado e catalogado
+objetivo: auditar o estado implementado do meta-repo
+etapa: concluída (LOG 006)
+passo: relatório em docs/auditorias/001-estado-atual.md
 status: concluído
 
 ## Entendimento atual
-Sistema materializado e validado (LOG 002): 9 skills, gate testado nas 3
-vias, 9 skills no ZCode via symlink. Backlog novo descreve a futura pasta
-goal/ (goal → macro → micro) como casa persistente das specs de decompor.
+O bootstrap tem nove skills, catálogos, uma ADR completa e hook ativo.
+O LOG 002 documenta testes do gate; uso em repo-alvo real ainda está pendente.
 
 ## Decisões que mudam o futuro
-- Estrutura goal/ = implementação futura: proposta original preservada +
-  v2 melhorada (NNN-slug em todo nível, micro=arquivo, frontmatter status)
-  em BACKLOGS/001; aberturas a decidir na implementação
-- Gate validado: comm exige LC_ALL=C; porque exige grep -E
-- .zcode/ ignorado; DELTA_VERSION.md intacto (decisão do usuário)
-- Instalação: ZCode feito; Codex e OpenCode ainda não
+- IDEIA.md é a especificação autoritativa; DELTA_VERSION.md é referência histórica.
+- Auditar encontrou dois desalinhamentos: campos exigidos pelo gate e teto
+  documental da skill auditar. Detalhes e correção mínima no relatório 001.
 
 ## Próximo passo imediato
-Primeira task real usando o sistema num repo-alvo (ou implementar
-BACKLOGS/001, se o usuário preferir começar por ela).
+Decidir se corrigimos os achados do relatório antes do primeiro uso em repo-alvo.
 
 ## Bloqueios
 —
