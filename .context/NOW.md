@@ -1,22 +1,25 @@
 # NOW
 objetivo: bootstrap funcional do meta-repo do agente
-etapa: implementar (LOG 002)
-passo: artefatos criados / git + gate + instalação ZCode pendentes
-status: em-progresso
+etapa: concluída (LOG 002)
+passo: bootstrap fechado / próxima task real pendente
+status: concluído
 
 ## Entendimento atual
-Repo auto-hospeda o modelo: 9 skills nucleares (evoluídas além do blueprint),
-AGENTS.md como lei, ADRs 0001–0010 em catálogo. Catálogos, ADR-exemplo,
-hook e .context recém-criados; zero uso real ainda.
+Sistema materializado e VALIDADO: 9 skills nucleares, AGENTS.md como lei,
+catálogos preenchidos, ADR-0001 exemplo + 0010 indexadas, gate pre-commit
+ativo (core.hooksPath=hooks) e testado nas 3 vias, 9 skills visíveis ao
+ZCode via symlink. Git no main, 3 commits, tree limpa.
 
-## Decisões desta execução
-- Escopo fechado com o usuário: só bootstrap — DELTA_VERSION.md intacto, sem trim das skills
-- Instalação: só ZCode nesta sessão (symlink por skill, fonte única no repo)
-- Gate via core.hooksPath=hooks (hook versionado no repo)
-- ADRs completas em arquivo: só 0001; resto vive no ADR-CATALOG até promoção
+## Decisões que mudam o futuro
+- Gate validado: comm exige LC_ALL=C; porque exige grep -E (BRE mata '.+')
+- .zcode/ ignorado: artefato de harness, não unidade do repo
+- DELTA_VERSION.md intacto por decisão do usuário (registro histórico)
+- ADRs completas em arquivo: só a 0001; resto vive no ADR-CATALOG
+- Instalação: ZCode feito (symlink); Codex e OpenCode ainda não
 
 ## Próximo passo imediato
-git init → primeiro commit via gate → testes dos 3 cenários → symlinks ZCode
+Primeira task real usando o sistema (conter → …) num repo-alvo; ela gera
+as cicatrizes que validam ou corrigem o modelo (IDEIA, "Como saber que funciona").
 
 ## Bloqueios
 —
