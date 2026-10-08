@@ -1,28 +1,25 @@
 # NOW
-objetivo: reconciliar fluxos paralelos (auditoria 006 + backlog 002)
-etapa: concluída (LOG 007)
-passo: auditoria commitada (dbbd0b8); backlog 002 registrado e catalogado
+objetivo: topologia de branches multiagente ativa
+etapa: concluída (LOG 008)
+passo: dev-ai + dev-ai-{codex,opencode,zcode} criadas; ZCode em dev-ai-zcode
 status: concluído
 
 ## Entendimento atual
-9 commits no main, remote via SSH. Dois fluxos de agente rodaram em
-paralelo e foram reconciliados sem perda (LOG 007, incidente). Dois
-backlogs aguardam implementação: 001 (pasta goal/) e 002 (fluxo
-multiagente com verificação cruzada).
+BACKLOGS/002 implementado PARCIALMENTE: só a topologia. main = estável
+(4a04042, 2 commits à frente do origin), dev-ai = integração (igual à
+main), dev-ai-zcode recebe o trabalho do ZCode (LOG 008 incluso).
+Branches do Codex e do OpenCode prontas e intocadas.
 
 ## Decisões que mudam o futuro
-- Achado 3 da auditoria 001 APLICADO: IDEIA.md = spec autoritativa;
-  DELTA_VERSION.md = referência histórica no CATALOG
-- Achados 1–2 da auditoria PENDENTES de decisão do usuário:
-  (1) gate exige só porque, não conceito, fora do fast path documentado;
-  (2) teto doc>40 da skill auditar contradiz o guia 50–150 do AGENTS.md
-- BACKLOGS/002: verificador ≠ implementador no gate da dev-ai; claim de
-  micro (dono:) coordena agentes; main = estável promovido pelo humano
-- Colisão 006×006 evidenciou o problema de coordenação que o 002 endereça
+- Cada agente commita SÓ na sua dev-ai-<agente> (ou feature/* dela)
+- Merge à dev-ai exige verificador ≠ implementador (BACKLOGS/002)
+- Pendências do 002: gate de branch no hook, claim de micro, AGENTS emendado
+- Achados 1–2 da auditoria 001 aguardam decisão do usuário
+- IDEIA.md = spec autoritativa; DELTA_VERSION.md = histórico (achado 3)
 
 ## Próximo passo imediato
-Usuário decide: corrigir achados 1–2 antes do primeiro uso em repo-alvo?
-(ou implementar BACKLOGS/001/002 primeiro)
+Trabalhar em dev-ai-zcode; merge à dev-ai só com verificador cruzado
+(Codex/OpenCode/humano). Primeira task real ou resto do BACKLOGS/002.
 
 ## Bloqueios
 —
