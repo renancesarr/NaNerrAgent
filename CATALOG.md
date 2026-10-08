@@ -6,8 +6,8 @@ Skills são autodocumentadas — o SKILL.md de cada uma é a sua doc de contexto
 | Unidade | Responsabilidade |
 |---|---|
 | AGENTS.md | leis, taxonomia de skills, pipeline, protocolo context-now |
-| IDEIA.md | o problema (5 dores), os 9 mecanismos e as métricas de sucesso |
-| DELTA_VERSION.md | registro histórico da conversa que originou o sistema |
+| IDEIA.md | spec autoritativa do projeto: problema, 9 mecanismos, métricas (auditoria 001, achado 3) |
+| DELTA_VERSION.md | referência histórica — não é unidade ativa (auditoria 001, achado 3) |
 | skills/agents-skills/clarificar | detecta ambiguidades do prompt, 3 opções, valida entendimento |
 | skills/agents-skills/decompor | quebra objetivo em checkpoint→macro→micro com spec verificável |
 | skills/agents-skills/modelar-dominio | glossário + ADRs com granularidade correta e vínculo |
@@ -21,3 +21,4 @@ Skills são autodocumentadas — o SKILL.md de cada uma é a sua doc de contexto
 | ADR-CATALOG.md | índice das decisões ADR-0001 a ADR-0010 |
 | IMPLEMENTS-CATALOG.md | vazio no bootstrap — meta-repo sem dialeto próprio |
 | BACKLOGS/001-estrutura-goal.md | backlog: pasta goal/ com árvore macro/micro — implementação futura |
+| BACKLOGS/002-fluxo-multiagente.md | backlog: branches dev-ai-* por agente + verificação cruzada — implementação futura |
