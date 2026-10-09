@@ -1,24 +1,22 @@
 # NOW
-objective: record agent identity and configuration as a backlog
-stage: done (LOG 020)
-step: BACKLOGS/004-agent-identity-config.md cataloged
-status: done
+objective: enforce the agent branch and Git identity lock
+stage: verified
+step: commit the completed change on dev-ai-codex, then open a PR to dev-ai
+status: in-progress
 
 ## Current understanding
-Codex's requested Git identity is `Codex Agent` / `codex@nanerr.local`.
-Codex works on `dev-ai-codex` and opens PRs to `dev-ai`; configuration and
-GitHub actor selection remain future implementation work.
+The tested guard binds Codex to codex-ai <codex-ai@nanerr.local> on
+dev-ai-codex and ZCode to dev-ai-zcode. This worktree's identity is isolated
+with git config --worktree. The global identity is unchanged.
 
 ## Decisions that change the future
-- Git commit author metadata is distinct from authenticated GitHub PR actor.
-- `skills/implements-skills/configuregit.md` is an untracked draft to
-  reconcile during implementation, not an accepted contract.
-- New identity work is backlog 004 to avoid colliding with backlog 003 on
-  the parallel ZCode branch.
+- The exact branch and identity mapping lives in .context/agent-branches.
+- AGENTS checks branch first and configures identity only inside the correct worktree.
+- Commit and merge hooks reject mismatches; target installs omit the mapping.
+- The PR must be reviewed by a different agent or a human.
 
 ## Immediate next step
-Implement BACKLOGS/004 when requested, on `dev-ai-codex`, then open a PR to
-`dev-ai` for independent review.
+Commit this verified change with the Codex worktree identity and push dev-ai-codex.
 
 ## Blockers
-—
+PR creation must use an account with repository pull-request write access.

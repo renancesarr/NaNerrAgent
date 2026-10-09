@@ -1,9 +1,11 @@
-AGENTS.md
-CATALOG.md
-ADR-CATALOG.md
-IMPLEMENTS-CATALOG.md
-hooks/pre-commit
 .context/NOW.md
+.context/log/001-installation.md
 .context/pending-human.md
 .context/touched
-.context/log/001-installation.md
+ADR-CATALOG.md
+AGENTS.md
+CATALOG.md
+IMPLEMENTS-CATALOG.md
+hooks/check-agent-branch.sh
+hooks/pre-commit
+hooks/pre-merge-commit

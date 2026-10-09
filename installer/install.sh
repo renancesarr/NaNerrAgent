@@ -28,7 +28,8 @@ TARGET="$(cd "$TARGET" && pwd)"
 # (AGENTS.md is NOT in this list: an existing one is preserved — see below)
 CONFLICTS=()
 for f in CATALOG.md ADR-CATALOG.md IMPLEMENTS-CATALOG.md \
-         hooks/pre-commit .context/NOW.md; do
+         hooks/pre-commit hooks/check-agent-branch.sh \
+         hooks/pre-merge-commit .context/NOW.md; do
   if [ -e "$TARGET/$f" ]; then CONFLICTS+=("$f"); fi
 done
 if [ "${#CONFLICTS[@]}" -gt 0 ] && [ "$FORCE" -ne 1 ]; then
@@ -64,6 +65,8 @@ else
 fi
 mkdir -p "$TARGET/hooks"
 install -m 755 "$META/hooks/pre-commit" "$TARGET/hooks/pre-commit"
+install -m 755 "$META/hooks/check-agent-branch.sh" "$TARGET/hooks/check-agent-branch.sh"
+install -m 755 "$META/hooks/pre-merge-commit" "$TARGET/hooks/pre-merge-commit"
 
 # zeroed skeleton (templates)
 install -m 644 "$TPL/CATALOG.md"            "$TARGET/CATALOG.md"

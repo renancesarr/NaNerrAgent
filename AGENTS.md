@@ -6,14 +6,24 @@ Nothing important lives only in your session memory.
 
 ## 1. First action of every session
 
-1. Is there a `.context/pending-human.md` with `because:` filled?
+1. **Check agent branch and identity first.** If `.context/agent-branches`
+   exists, find this agent's row and run `git branch --show-current`,
+   `git config user.name`, and `git config user.email`. If the branch is
+   wrong, stop before reading or changing project files and attach this
+   agent's worktree; never switch another agent's branch. If the branch is
+   correct but name/email differ, enable `extensions.worktreeConfig` in
+   repository-local config if needed, then set `agent.id`, `user.name`,
+   and `user.email` with `git config --worktree` from that row and verify.
+   Never use `--global` or shared local config for an agent identity. If the
+   map is absent, follow the project's own branch instructions.
+2. Is there a `.context/pending-human.md` with `because:` filled?
    → run `capture-human` before any task. The human edit may
    invalidate the NOW; reconcile before resuming.
-2. Is there a `.context/NOW.md` with status `in-progress`?
+3. Is there a `.context/NOW.md` with status `in-progress`?
    → read the NOW + the last LOG entry → check against `git status`
    and real artifacts. Divergence? Re-validate the step; never resume blind.
    No divergence? Execute the "immediate next step".
-3. Nothing exists → every new task starts at `contain` (classification, §4).
+4. Nothing exists → every new task starts at `contain` (classification, §4).
 
 ## 2. Engineering laws
 
@@ -106,3 +116,18 @@ failed. Go back one step; don't write a bigger NOW.
 This repo's units, ADRs and skills are indexed in CATALOG.md and ADR-CATALOG.md. Consult them; do not duplicate them here.
 
 ```
+
+## 8. Agent branch and Git identity
+
+`.context/agent-branches` is the authoritative mapping of agent ID, Git
+name/email, and its one work branch. Each agent stays on its row's exact
+branch for all work and commits. The pre-commit and pre-merge-commit hooks
+block a mapped identity on another branch and unknown identities on a
+reserved agent branch.
+
+Set identity per linked worktree with `git config --worktree`. Never use
+`--global` or shared repository-local identity to configure an agent.
+Agent branches open PRs to `dev-ai`; the authoring agent does not review its
+own PR. Another agent or a human performs the independent review. Use normal
+Git commands so both hooks run; server-side branch rules are needed when
+protection against intentional hook bypass is required.

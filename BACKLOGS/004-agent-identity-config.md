@@ -14,7 +14,9 @@ Git and GitHub identity, without leaking configuration between agents,
 worktrees, or target projects.
 
 ## Confirmed decisions
-- Codex Git author: `name = Codex Agent`, `email = codex@nanerr.local`.
+- Codex Git author: `name = codex-ai`, `email = codex-ai@nanerr.local` (latest explicit user configuration).
+- Codex is restricted to `dev-ai-codex`; ZCode is restricted to `dev-ai-zcode`.
+- Git author identity is set per linked worktree and checked against the agent branch map before commit.
 - Codex works only on `dev-ai-codex` and proposes changes to `dev-ai` by PR.
 - Git commit identity and authenticated GitHub PR identity are separate:
   Git name/email label commits; GitHub authentication identifies the PR actor.
@@ -23,15 +25,15 @@ worktrees, or target projects.
 
 ## Scope to resolve
 - How an agent detects its identity reliably across Codex, ZCode, and OpenCode.
-- A registry mapping agent ID to Git name/email, work branch, and GitHub actor.
-- Applying Git settings per agent/worktree, never with `--global` and without
-  changing another agent's effective configuration.
+- The repository map now binds Codex and ZCode IDs to Git name/email and branch;
+  authenticated GitHub actors remain a separate mapping.
+- Extending per-worktree Git identity setup to additional supported agents and
+  fresh runtime environments without changing another agent's configuration.
 - Authenticated PR identity per agent; a separate GitHub App per agent is a
   candidate, subject to permissions and required-review behavior.
-- Mismatch handling when detected agent, checked-out branch, or existing Git
-  identity disagree. Unknown identity must not silently use a shared default.
-- Whether identity/config selection belongs in AGENTS, installer, an
-  implements-skill, or a small machine-local registry.
+- Reliable runtime detection for every CLI and policy for agents that are not
+  present in the repository's identity map.
+- Selecting authenticated GitHub actors and machine-local credentials for each CLI.
 
 ## Existing draft
 `skills/implements-skills/configuregit.md` is present but untracked. Review

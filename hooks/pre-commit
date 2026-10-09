@@ -2,6 +2,9 @@
 # ADR-0007: deterministic gate. LLM enrichment is deferred (capture-human).
 set -euo pipefail
 
+HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+"$HOOK_DIR/check-agent-branch.sh"
+
 TOUCHED=".context/touched"
 PENDING=".context/pending-human.md"
 STAGED=$(git diff --cached --name-only)
