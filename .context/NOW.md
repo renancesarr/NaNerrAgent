@@ -1,7 +1,7 @@
 # NOW
 objective: enforce the agent branch and Git identity lock
-stage: verified
-step: commit the completed change on dev-ai-codex, then open a PR to dev-ai
+stage: published
+step: create the PR from dev-ai-codex to dev-ai using an account with pull-request write access
 status: in-progress
 
 ## Current understanding
@@ -16,7 +16,9 @@ with git config --worktree. The global identity is unchanged.
 - The PR must be reviewed by a different agent or a human.
 
 ## Immediate next step
-Commit this verified change with the Codex worktree identity and push dev-ai-codex.
+Open the PR to dev-ai after GitHub integration permissions allow it.
 
 ## Blockers
-PR creation must use an account with repository pull-request write access.
+Commit 4f560437bf8b339250e0cefd9d6ed1fddf128b40 was created as
+codex-ai <codex-ai@nanerr.local> and pushed to origin/dev-ai-codex.
+GitHub PR creation returned 403 Resource not accessible by integration.
