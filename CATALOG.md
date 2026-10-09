@@ -25,3 +25,4 @@ Skills are self-documenting — each one's SKILL.md is its context doc.
 | IMPLEMENTS-CATALOG.md | empty in bootstrap — meta-repo has no dialect of its own |
 | BACKLOGS/001-goal-structure.md | backlog: goal/ folder with macro/micro tree — future implementation |
 | BACKLOGS/002-multiagent-flow.md | backlog: dev-ai-* branches per agent + cross-verification |
+| BACKLOGS/004-agent-identity-config.md | backlog: deterministic agent identity, Git config, GitHub PR actor, and independent verification |

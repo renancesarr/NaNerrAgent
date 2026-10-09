@@ -1,24 +1,24 @@
 # NOW
-objective: promote full system to dev-ai and main
-stage: done (LOG 014)
-step: user authorized promotion; merges executed
+objective: record agent identity and configuration as a backlog
+stage: done (LOG 020)
+step: BACKLOGS/004-agent-identity-config.md cataloged
 status: done
 
 ## Current understanding
-All branches converge: main = dev-ai = dev-ai-zcode content (English
-system, installer v3, ADR-0011, 14 LOG entries). Promotion authorized by
-the human (release gate for main); cross-verification deviation recorded
-in LOG 014 (verifier = human this time).
+Codex's requested Git identity is `Codex Agent` / `codex@nanerr.local`.
+Codex works on `dev-ai-codex` and opens PRs to `dev-ai`; configuration and
+GitHub actor selection remain future implementation work.
 
 ## Decisions that change the future
-- main is now the reference project: everything installed elsewhere comes
-  from here
-- Promotion deviation recorded: verifier = human (explicit authorization)
-- Pending: audit findings 1–2; BACKLOGS/001 (goal/); rest of 002 (branch
-  gate in hook, micro claim, AGENTS amendment)
+- Git commit author metadata is distinct from authenticated GitHub PR actor.
+- `skills/implements-skills/configuregit.md` is an untracked draft to
+  reconcile during implementation, not an accepted contract.
+- New identity work is backlog 004 to avoid colliding with backlog 003 on
+  the parallel ZCode branch.
 
 ## Immediate next step
-First real task in a target project, or implement BACKLOGS/001.
+Implement BACKLOGS/004 when requested, on `dev-ai-codex`, then open a PR to
+`dev-ai` for independent review.
 
 ## Blockers
 —
