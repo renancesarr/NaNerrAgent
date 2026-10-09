@@ -11,3 +11,4 @@ objective test: `bash -n hooks/check-agent-branch.sh hooks/pre-commit hooks/pre-
 worktree check: branch dev-ai-codex; agent.id=ai-codex; name=ai-codex; email=dev-ai-codex@nanerr.local. Global name/email unchanged. ZCode worktree not modified.
 result: pass
 sync: updated ADR-0012, AGENTS, backlog, hook/installer docs, CATALOG, goal 005, NOW, and touched manifest.
+publication: commit 104e92292b8ccf1ca96febd26ddf856aea1835e1 pushed to origin/dev-ai-codex with the exact Codex identity. GitHub search found no open PR to dev-ai; PR creation again returned 403 Resource not accessible by integration.

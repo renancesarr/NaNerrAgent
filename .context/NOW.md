@@ -1,7 +1,7 @@
 # NOW
 objective: enforce the exact agent branch, Git name, and email mapping
-stage: verified
-step: commit the refinement with ai-codex identity, push dev-ai-codex, then check the PR to dev-ai
+stage: published
+step: open PR from dev-ai-codex to dev-ai with an account that has pull-request write permission
 status: in-progress
 
 ## Current understanding
@@ -23,8 +23,10 @@ pairs and rejection of wrong ID, name, email, branch, unknown identity,
 detached HEAD, and merge commit. `git diff --check` and `bash -n` passed.
 
 ## Immediate next step
-Commit the verified refinement and push dev-ai-codex.
+Open the PR to dev-ai when the GitHub integration has write permission.
 
 ## Blockers
-The earlier PR attempt for commit 4f560437 returned 403 from the GitHub
-integration. Revisit PR creation after this refinement is pushed.
+Commit 104e92292b8ccf1ca96febd26ddf856aea1835e1 was pushed to
+origin/dev-ai-codex as ai-codex <dev-ai-codex@nanerr.local>.
+No open PR exists for dev-ai-codex to dev-ai. Creation returned 403
+Resource not accessible by integration.
