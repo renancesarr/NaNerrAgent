@@ -92,19 +92,25 @@ git -C "$TMP/agent-lock" commit -m "bootstrap" >/dev/null 2>&1
 git -C "$TMP/agent-lock" switch -c dev-ai-codex >/dev/null
 cat > "$TMP/agent-lock/.context/agent-branches" <<'MAP'
 # agent-id|git-name|git-email|branch
-codex-ai|codex-ai|codex-ai@nanerr.local|dev-ai-codex
-zcode-ai|zcode-ai|zcode-ai@nanerr.local|dev-ai-zcode
+ai-codex|ai-codex|dev-ai-codex@nanerr.local|dev-ai-codex
+ai-zcode|ai-zcode|dev-ai-zcode@nanerr.local|dev-ai-zcode
 MAP
 printf '%s\n' '.context/agent-branches' '.context/touched' >> "$TMP/agent-lock/.context/touched"
 LC_ALL=C sort -u "$TMP/agent-lock/.context/touched" -o "$TMP/agent-lock/.context/touched"
-git -C "$TMP/agent-lock" config user.name "codex-ai"
-git -C "$TMP/agent-lock" config user.email "codex-ai@nanerr.local"
-git -C "$TMP/agent-lock" config agent.id "codex-ai"
+git -C "$TMP/agent-lock" config user.name "ai-codex"
+git -C "$TMP/agent-lock" config user.email "dev-ai-codex@nanerr.local"
+git -C "$TMP/agent-lock" config agent.id "ai-zcode"
+if git -C "$TMP/agent-lock" commit --allow-empty -m "wrong agent id" >/dev/null 2>&1; then
+  fail_ "mapped agent with wrong id is blocked"
+else
+  ok "mapped agent with wrong id is blocked"
+fi
+git -C "$TMP/agent-lock" config agent.id "ai-codex"
 git -C "$TMP/agent-lock" add .context/agent-branches .context/touched
 if git -C "$TMP/agent-lock" commit -m "configure agent map" >/dev/null 2>&1; then
-  ok "mapped Codex identity passes on dev-ai-codex"
+  ok "ai-codex with full branch email passes on dev-ai-codex"
 else
-  fail_ "mapped Codex identity passes on dev-ai-codex"
+  fail_ "ai-codex with full branch email passes on dev-ai-codex"
 fi
 
 git -C "$TMP/agent-lock" switch -c dev-ai-zcode >/dev/null
@@ -114,6 +120,13 @@ else
   ok "Codex identity blocked on dev-ai-zcode"
 fi
 git -C "$TMP/agent-lock" switch dev-ai-codex >/dev/null
+git -C "$TMP/agent-lock" config user.name "wrong-name"
+if git -C "$TMP/agent-lock" commit --allow-empty -m "wrong name" >/dev/null 2>&1; then
+  fail_ "mapped agent with wrong name is blocked"
+else
+  ok "mapped agent with wrong name is blocked"
+fi
+git -C "$TMP/agent-lock" config user.name "ai-codex"
 git -C "$TMP/agent-lock" config user.email "wrong@nanerr.local"
 if git -C "$TMP/agent-lock" commit --allow-empty -m "wrong email" >/dev/null 2>&1; then
   fail_ "mapped agent with wrong email is blocked"
@@ -128,9 +141,9 @@ if git -C "$TMP/agent-lock" commit --allow-empty -m "unknown identity" >/dev/nul
 else
   ok "unknown identity blocked on reserved branch"
 fi
-git -C "$TMP/agent-lock" config user.name "codex-ai"
-git -C "$TMP/agent-lock" config user.email "codex-ai@nanerr.local"
-git -C "$TMP/agent-lock" config agent.id "codex-ai"
+git -C "$TMP/agent-lock" config user.name "ai-codex"
+git -C "$TMP/agent-lock" config user.email "dev-ai-codex@nanerr.local"
+git -C "$TMP/agent-lock" config agent.id "ai-codex"
 git -C "$TMP/agent-lock" checkout --detach HEAD >/dev/null 2>&1
 if git -C "$TMP/agent-lock" commit --allow-empty -m "detached identity" >/dev/null 2>&1; then
   fail_ "detached agent HEAD is blocked"
@@ -138,13 +151,13 @@ else
   ok "detached agent HEAD is blocked"
 fi
 git -C "$TMP/agent-lock" checkout dev-ai-zcode >/dev/null
-git -C "$TMP/agent-lock" config user.name "zcode-ai"
-git -C "$TMP/agent-lock" config user.email "zcode-ai@nanerr.local"
-git -C "$TMP/agent-lock" config agent.id "zcode-ai"
+git -C "$TMP/agent-lock" config user.name "ai-zcode"
+git -C "$TMP/agent-lock" config user.email "dev-ai-zcode@nanerr.local"
+git -C "$TMP/agent-lock" config agent.id "ai-zcode"
 if git -C "$TMP/agent-lock" commit --allow-empty -m "ZCode identity" >/dev/null 2>&1; then
-  ok "mapped ZCode identity passes on dev-ai-zcode"
+  ok "ai-zcode with full branch email passes on dev-ai-zcode"
 else
-  fail_ "mapped ZCode identity passes on dev-ai-zcode"
+  fail_ "ai-zcode with full branch email passes on dev-ai-zcode"
 fi
 
 # A merge commit is checked by pre-merge-commit, which keeps the normal

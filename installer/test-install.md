@@ -9,6 +9,7 @@ branch identity enforcement in real temporary Git repositories.
 interface: installer/test-install.sh; exits nonzero on any failed assertion.
 dependencies: installer/install.sh, hooks/check-agent-branch.sh,
 hooks/pre-merge-commit.
-example: validates Codex and ZCode mappings, mismatch rejection, detached
-HEAD rejection, merge rejection, and the no-map target behavior.
+example: validates exact Codex and ZCode branch/name/email mappings, each
+mismatch rejection, detached HEAD rejection, merge rejection, and the no-map
+target behavior.
 notes: test repositories are temporary and removed on exit.

@@ -1,5 +1,6 @@
 .context/NOW.md
 .context/agent-branches
+.context/log/022-agent-identity-contract-refinement.md
 .context/log/021-agent-branch-lock.md
 .context/touched
 ADR-CATALOG.md
@@ -11,6 +12,7 @@ goal/005-agent-branch-lock/001-contract.md
 goal/005-agent-branch-lock/002-enforcement.md
 goal/005-agent-branch-lock/003-hook-install.md
 goal/005-agent-branch-lock/004-verify-and-configure.md
+goal/005-agent-branch-lock/005-identity-contract-refinement.md
 goal/005-agent-branch-lock/GOAL.md
 hooks/check-agent-branch.md
 hooks/check-agent-branch.sh

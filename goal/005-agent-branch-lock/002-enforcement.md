@@ -9,8 +9,8 @@ branches.
 
 criteria:
 - [x] Map rows identify agent, Git name, Git email, and exact branch.
-- [x] Codex maps to codex-ai <codex-ai@nanerr.local> on dev-ai-codex.
-- [x] ZCode maps to zcode-ai on dev-ai-zcode.
+- [x] Codex maps to ai-codex <dev-ai-codex@nanerr.local> on dev-ai-codex.
+- [x] ZCode maps to ai-zcode <dev-ai-zcode@nanerr.local> on dev-ai-zcode.
 - [x] Matching identity passes; mismatch, unknown identity on reserved branch, unknown agent.id, and detached HEAD fail.
 - [x] A repository without the map receives no agent-specific restriction.
 

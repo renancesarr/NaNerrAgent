@@ -7,15 +7,17 @@ Nothing important lives only in your session memory.
 ## 1. First action of every session
 
 1. **Check agent branch and identity first.** If `.context/agent-branches`
-   exists, find this agent's row and run `git branch --show-current`,
-   `git config user.name`, and `git config user.email`. If the branch is
-   wrong, stop before reading or changing project files and attach this
-   agent's worktree; never switch another agent's branch. If the branch is
-   correct but name/email differ, enable `extensions.worktreeConfig` in
-   repository-local config if needed, then set `agent.id`, `user.name`,
-   and `user.email` with `git config --worktree` from that row and verify.
-   Never use `--global` or shared local config for an agent identity. If the
-   map is absent, follow the project's own branch instructions.
+   exists, identify this agent's exact row and compare its ID, Git name,
+   Git email, and branch with `git config agent.id`, `git config user.name`,
+   `git config user.email`, and `git branch --show-current`. If the current
+   branch is wrong, stop before reading or changing project files and attach
+   this agent's dedicated worktree; never switch or reconfigure another
+   agent's worktree. Separate worktrees let agents proceed in parallel. On the correct
+   branch, configure all three worktree values from the identified row when
+   needed, then verify them. Never use `--global` or shared local config for
+   an agent identity. If identity or branch mapping is ambiguous or missing,
+   ask the user and stop before editing or committing; do not infer a value.
+   If the map is absent, follow the project's own branch instructions.
 2. Is there a `.context/pending-human.md` with `because:` filled?
    → run `capture-human` before any task. The human edit may
    invalidate the NOW; reconcile before resuming.
@@ -123,7 +125,10 @@ This repo's units, ADRs and skills are indexed in CATALOG.md and ADR-CATALOG.md.
 name/email, and its one work branch. Each agent stays on its row's exact
 branch for all work and commits. The pre-commit and pre-merge-commit hooks
 block a mapped identity on another branch and unknown identities on a
-reserved agent branch.
+reserved agent branch. For this repository, `dev-ai-codex` maps to
+`ai-codex <dev-ai-codex@nanerr.local>` and `dev-ai-zcode` maps to
+`ai-zcode <dev-ai-zcode@nanerr.local>`; the Git name is the short agent name,
+while the email contains the full branch name.
 
 Set identity per linked worktree with `git config --worktree`. Never use
 `--global` or shared repository-local identity to configure an agent.

@@ -10,7 +10,7 @@ criteria:
 - [x] Correct Codex and ZCode identities pass only on their assigned branches.
 - [x] Wrong branch, mismatched name/email, unknown identity on a reserved branch, and detached HEAD are blocked.
 - [x] A merge commit on a reserved agent branch invokes the guard.
-- [x] Codex's effective worktree config is codex-ai <codex-ai@nanerr.local> with agent.id codex-ai on dev-ai-codex.
+- [x] Codex's effective worktree config is ai-codex <dev-ai-codex@nanerr.local> with agent.id ai-codex on dev-ai-codex.
 - [x] Global Git identity is unchanged.
 
 dependencies: goal/005-agent-branch-lock/003-hook-install.md

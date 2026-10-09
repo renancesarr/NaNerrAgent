@@ -21,12 +21,17 @@ leak one agent's identity into a linked worktree.
 
 ## decision
 Use per-worktree Git configuration and a repository mapping that binds each
-supported agent's Git name/email to exactly one branch. AGENTS requires a
-branch check before work and configures identity only when that branch is correct. Codex is
-codex-ai <codex-ai@nanerr.local> on dev-ai-codex. ZCode is
-zcode-ai <zcode-ai@nanerr.local> on dev-ai-zcode. The mapping is only present
-in this meta-repository; target installs without it retain their existing
-hook behavior. PRs target dev-ai and require review by another agent or human.
+supported agent ID, Git name, and Git email to exactly one branch. AGENTS
+requires a branch check before work and configures identity only when that
+branch is correct. `dev-ai-codex` maps to `ai-codex`
+`<dev-ai-codex@nanerr.local>`; `dev-ai-zcode` maps to `ai-zcode`
+`<dev-ai-zcode@nanerr.local>`. The Git name is the short agent name; the
+email uses the full branch name. The mapping is only present in this
+meta-repository; target installs without it retain their existing hook
+behavior. PRs target dev-ai and require review by another agent or human.
+
+If the agent's identity or branch mapping is ambiguous or missing, the agent
+asks the user and stops before editing or committing rather than guessing.
 
 ## consequences
 Agents must verify their branch and effective Git identity at session start.

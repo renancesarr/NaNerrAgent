@@ -8,8 +8,8 @@ system instructions and record why the latest branch decision supersedes the
 older feature-branch proposal.
 
 criteria:
-- [x] Codex is assigned only to dev-ai-codex and codex-ai <codex-ai@nanerr.local>.
-- [x] ZCode is assigned to dev-ai-zcode.
+- [x] Codex is assigned only to dev-ai-codex and ai-codex <dev-ai-codex@nanerr.local>.
+- [x] ZCode is assigned only to dev-ai-zcode and ai-zcode <dev-ai-zcode@nanerr.local>.
 - [x] AGENTS says to stop before work/commit when the current branch is wrong.
 - [x] ADR captures the branch/identity binding and alternatives.
 

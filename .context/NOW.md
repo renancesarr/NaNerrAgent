@@ -1,24 +1,30 @@
 # NOW
-objective: enforce the agent branch and Git identity lock
-stage: published
-step: create the PR from dev-ai-codex to dev-ai using an account with pull-request write access
+objective: enforce the exact agent branch, Git name, and email mapping
+stage: verified
+step: commit the refinement with ai-codex identity, push dev-ai-codex, then check the PR to dev-ai
 status: in-progress
 
 ## Current understanding
-The tested guard binds Codex to codex-ai <codex-ai@nanerr.local> on
-dev-ai-codex and ZCode to dev-ai-zcode. This worktree's identity is isolated
-with git config --worktree. The global identity is unchanged.
+Codex is `ai-codex <dev-ai-codex@nanerr.local>` on `dev-ai-codex`;
+ZCode is `ai-zcode <dev-ai-zcode@nanerr.local>` on `dev-ai-zcode`.
+The Codex identity is isolated with `git config --worktree`; global Git config
+and the ZCode worktree are untouched.
 
 ## Decisions that change the future
-- The exact branch and identity mapping lives in .context/agent-branches.
-- AGENTS checks branch first and configures identity only inside the correct worktree.
-- Commit and merge hooks reject mismatches; target installs omit the mapping.
-- The PR must be reviewed by a different agent or a human.
+- `.context/agent-branches` is authoritative for agent ID, name, email, branch.
+- Branch mismatch means stop and attach the correct dedicated worktree.
+- Missing or ambiguous identity mapping means ask the user; never guess.
+- Commit and merge hooks check the exact identity/branch; pre-commit also checks staged paths against `.context/touched`.
+- Each agent uses a separate worktree so work can proceed in parallel.
+
+## Verification
+`installer/test-install.sh`: ALL GREEN, 33 assertions; covers exact Codex/ZCode
+pairs and rejection of wrong ID, name, email, branch, unknown identity,
+detached HEAD, and merge commit. `git diff --check` and `bash -n` passed.
 
 ## Immediate next step
-Open the PR to dev-ai after GitHub integration permissions allow it.
+Commit the verified refinement and push dev-ai-codex.
 
 ## Blockers
-Commit 4f560437bf8b339250e0cefd9d6ed1fddf128b40 was created as
-codex-ai <codex-ai@nanerr.local> and pushed to origin/dev-ai-codex.
-GitHub PR creation returned 403 Resource not accessible by integration.
+The earlier PR attempt for commit 4f560437 returned 403 from the GitHub
+integration. Revisit PR creation after this refinement is pushed.

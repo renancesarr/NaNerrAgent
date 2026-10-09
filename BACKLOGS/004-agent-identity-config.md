@@ -14,8 +14,9 @@ Git and GitHub identity, without leaking configuration between agents,
 worktrees, or target projects.
 
 ## Confirmed decisions
-- Codex Git author: `name = codex-ai`, `email = codex-ai@nanerr.local` (latest explicit user configuration).
+- Codex Git author: `name = ai-codex`, `email = dev-ai-codex@nanerr.local`.
 - Codex is restricted to `dev-ai-codex`; ZCode is restricted to `dev-ai-zcode`.
+- ZCode Git author: `name = ai-zcode`, `email = dev-ai-zcode@nanerr.local`.
 - Git author identity is set per linked worktree and checked against the agent branch map before commit.
 - Codex works only on `dev-ai-codex` and proposes changes to `dev-ai` by PR.
 - Git commit identity and authenticated GitHub PR identity are separate:
@@ -41,11 +42,11 @@ and reconcile it during implementation; it is not yet an accepted or
 cataloged contract.
 
 ## Acceptance criteria
-- [ ] A fresh Codex workspace resolves to `Codex Agent`
-      <codex@nanerr.local> and branch `dev-ai-codex`.
-- [ ] Codex's effective Git identity is isolated from other agents and is
+- [x] A Codex worktree on `dev-ai-codex` resolves to `ai-codex`
+      `<dev-ai-codex@nanerr.local>`; ZCode follows the equivalent branch/name/email rule.
+- [x] Codex's effective Git identity is isolated from other agents and is
       verifiable before its first commit; no global Git identity is changed.
-- [ ] Each supported agent resolves its own declared Git identity and branch;
+- [x] Codex and ZCode resolve their declared Git identity and branch;
       unknown or conflicting identity stops before commit.
 - [ ] A PR's authenticated GitHub actor is distinguishable from the commit's
       author metadata and maps to the implementing agent.
