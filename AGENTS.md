@@ -6,14 +6,26 @@ Nothing important lives only in your session memory.
 
 ## 1. First action of every session
 
-1. Is there a `.context/pending-human.md` with `because:` filled?
+1. **Check agent branch and identity first.** If `.context/agent-branches`
+   exists, identify this agent's exact row and compare its ID, Git name,
+   Git email, and branch with `git config agent.id`, `git config user.name`,
+   `git config user.email`, and `git branch --show-current`. If the current
+   branch is wrong, stop before reading or changing project files and attach
+   this agent's dedicated worktree; never switch or reconfigure another
+   agent's worktree. Separate worktrees let agents proceed in parallel. On the correct
+   branch, configure all three worktree values from the identified row when
+   needed, then verify them. Never use `--global` or shared local config for
+   an agent identity. If identity or branch mapping is ambiguous or missing,
+   ask the user and stop before editing or committing; do not infer a value.
+   If the map is absent, follow the project's own branch instructions.
+2. Is there a `.context/pending-human.md` with `because:` filled?
    → run `capture-human` before any task. The human edit may
    invalidate the NOW; reconcile before resuming.
-2. Is there a `.context/NOW.md` with status `in-progress`?
+3. Is there a `.context/NOW.md` with status `in-progress`?
    → read the NOW + the last LOG entry → check against `git status`
    and real artifacts. Divergence? Re-validate the step; never resume blind.
    No divergence? Execute the "immediate next step".
-3. Nothing exists → every new task starts at `contain` (classification, §4).
+4. Nothing exists → every new task starts at `contain` (classification, §4).
 
 ## 2. Engineering laws
 
@@ -106,3 +118,21 @@ failed. Go back one step; don't write a bigger NOW.
 This repo's units, ADRs and skills are indexed in CATALOG.md and ADR-CATALOG.md. Consult them; do not duplicate them here.
 
 ```
+
+## 8. Agent branch and Git identity
+
+`.context/agent-branches` is the authoritative mapping of agent ID, Git
+name/email, and its one work branch. Each agent stays on its row's exact
+branch for all work and commits. The pre-commit and pre-merge-commit hooks
+block a mapped identity on another branch and unknown identities on a
+reserved agent branch. For this repository, `dev-ai-codex` maps to
+`ai-codex <dev-ai-codex@nanerr.local>` and `dev-ai-zcode` maps to
+`ai-zcode <dev-ai-zcode@nanerr.local>`; the Git name is the short agent name,
+while the email contains the full branch name.
+
+Set identity per linked worktree with `git config --worktree`. Never use
+`--global` or shared repository-local identity to configure an agent.
+Agent branches open PRs to `dev-ai`; the authoring agent does not review its
+own PR. Another agent or a human performs the independent review. Use normal
+Git commands so both hooks run; server-side branch rules are needed when
+protection against intentional hook bypass is required.

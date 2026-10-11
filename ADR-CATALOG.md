@@ -13,8 +13,8 @@
 | 0009 | accepted | NOW ceiling as decomposition diagnosis | protocol, decompose |
 | 0010 | accepted | DDD-lite: ubiquitous language yes, formal ceremony no | model-domain |
 | 0011 | accepted | Installer: skeleton per project, global skills; target AGENTS.md preserved at end; anonymous targets | installer/ |
+| 0012 | accepted | Each agent has one branch and isolated Git identity; commit and merge hooks enforce the mapping | AGENTS.md, hooks/check-agent-branch.sh, hooks/pre-commit, hooks/pre-merge-commit, .context/agent-branches |
 
-Full ADR files: 0001 (canonical example) and 0011 (installer); the rest
-live in this index until they pass the promotion test (model-domain,
-granularity). Full-file names: 0001-cohesive-unit.md,
-0011-installer-skeleton-vs-global-skills.md.
+Full ADR files: 0001 (canonical example), 0011 (installer), and 0012
+(agent branch identity); remaining decisions stay in this index until they
+pass the promotion test (model-domain, granularity).

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# The merge gate checks agent ownership only; staged/touched does not apply to merges.
+set -euo pipefail
+HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+"$HOOK_DIR/check-agent-branch.sh"
