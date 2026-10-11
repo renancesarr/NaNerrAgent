@@ -1,32 +1,19 @@
 # NOW
-objective: enforce the exact agent branch, Git name, and email mapping
-stage: published
-step: open PR from dev-ai-codex to dev-ai with an account that has pull-request write permission
+objective: review the eight commits on dev-ai-zcode before integration
+stage: review complete; merge withheld pending fixes
+step: fix the recorded findings on the owning branch, then request independent re-review
 status: in-progress
 
 ## Current understanding
-Codex is `ai-codex <dev-ai-codex@nanerr.local>` on `dev-ai-codex`;
-ZCode is `ai-zcode <dev-ai-zcode@nanerr.local>` on `dev-ai-zcode`.
-The Codex identity is isolated with `git config --worktree`; global Git config
-and the ZCode worktree are untouched.
+GitHub compare reports dev-ai-zcode 8 commits ahead and 1 behind dev-ai.
+The installer suite passed 24 assertions, but the merge assertion is a no-op
+and an empty commit bypasses the protected-branch hook.
 
 ## Decisions that change the future
-- `.context/agent-branches` is authoritative for agent ID, name, email, branch.
-- Branch mismatch means stop and attach the correct dedicated worktree.
-- Missing or ambiguous identity mapping means ask the user; never guess.
-- Commit and merge hooks check the exact identity/branch; pre-commit also checks staged paths against `.context/touched`.
-- Each agent uses a separate worktree so work can proceed in parallel.
-
-## Verification
-`installer/test-install.sh`: ALL GREEN, 33 assertions; covers exact Codex/ZCode
-pairs and rejection of wrong ID, name, email, branch, unknown identity,
-detached HEAD, and merge commit. `git diff --check` and `bash -n` passed.
+- Codex reviewed the branch independently and did not modify its worktree.
+- Latest identity contract expects ai-zcode <dev-ai-zcode@nanerr.local>.
+- No merge to dev-ai until the identity, hook, docs, catalog, and test findings
+  in LOG 023 are resolved and re-verified.
 
 ## Immediate next step
-Open the PR to dev-ai when the GitHub integration has write permission.
-
-## Blockers
-Commit 104e92292b8ccf1ca96febd26ddf856aea1835e1 was pushed to
-origin/dev-ai-codex as ai-codex <dev-ai-codex@nanerr.local>.
-No open PR exists for dev-ai-codex to dev-ai. Creation returned 403
-Resource not accessible by integration.
+Review LOG 023 with the ZCode implementer; fix findings on its dedicated branch.

@@ -1,6 +1,7 @@
 .context/NOW.md
 .context/agent-branches
 .context/log/022-agent-identity-contract-refinement.md
+.context/log/023-review-dev-ai-zcode.md
 .context/log/021-agent-branch-lock.md
 .context/touched
 ADR-CATALOG.md
