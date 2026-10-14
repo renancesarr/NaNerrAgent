@@ -6,17 +6,30 @@ Nothing important lives only in your session memory.
 
 ## 1. First action of every session
 
-1. Is there a `.context/pending-human.md` with `because:` filled?
+1. **Check agent branch and identity first.** If `.context/agent-branches`
+   exists, identify this agent's exact row and compare its ID, Git name,
+   Git email, and branch with `git config agent.id`, `git config user.name`,
+   `git config user.email`, and `git branch --show-current`. If the current
+   branch is wrong, stop before reading or changing project files and attach
+   this agent's dedicated worktree; never switch or reconfigure another
+   agent's worktree. Separate worktrees let agents proceed in parallel. On the correct
+   branch, configure all three worktree values from the identified row when
+   needed, then verify them. Never use `--global` or shared local config for
+   an agent identity. If identity or branch mapping is ambiguous or missing,
+   ask the user and stop before editing or committing; do not infer a value.
+   If the map is absent, follow the project's own branch instructions.
+2. Is there a `.context/pending-human.md` with `because:` filled?
    → run `capture-human` before any task. The human edit may
    invalidate the NOW; reconcile before resuming.
-2. Is there a `.context/NOW.md` with status `in-progress`?
+3. Is there a `.context/NOW.md` with status `in-progress`?
    → read the NOW + the last LOG entry → check against `git status`
    and real artifacts. Divergence? Re-validate the step; never resume blind.
    No divergence? Execute the "immediate next step".
-3. Nothing exists → every new task starts at `contain` (classification, §4).
-4. Repo has `dev-ai-*` branches and yours isn't checked out?
-   → `git checkout dev-ai-<this-agent>` first (ADR-0014). Agents never
-   share a working tree — that's how LOG 007's collision happened.
+4. Nothing exists → every new task starts at `contain` (classification, §4).
+5. A session that already sits on this agent's own branch/worktree (rule 1)
+   resumes there — never `checkout` away from it, even to reach
+   `dev-ai-<this-agent>`; uncommitted work travels with whoever owns the tree.
+   Agents never share a working tree — that's how LOG 007's collision happened.
 
 ## 2. Engineering laws
 
@@ -107,20 +120,47 @@ failed. Go back one step; don't write a bigger NOW.
 ## 8. Multi-agent flow (ADR-0014)
 
 - Topology: `main` (stable, promoted by the HUMAN) ← `dev-ai`
-  (integration) ← `dev-ai-<agent>` per agent ← `feature/<slug>`.
-- Agents commit ONLY on their `dev-ai-<agent>` (or features from it).
+  (integration) ← `dev-ai-<agent>` per agent.
+- Agents commit ONLY on their exact `dev-ai-<agent>` branch — the row's
+  branch in `.context/agent-branches` (ADR-0012/§9). The mapped identity
+  is blocked anywhere else by the hooks, so no `feature/<slug>` branches
+  carry an agent identity; work happens on the agent branch itself.
 - `.context/protected-branches` (opt-in, one branch per line) makes the
-  hook block direct commits on listed branches without the human why.
+  hook block direct commits on listed branches without the human why —
+  including `--allow-empty` commits (the gate runs before any early exit).
 - Merge to `dev-ai` requires verifier ≠ implementer (the objective test
   run by another agent — or the human, as in LOG 014). Merges skip the
   pre-commit hook by git design; the record lives in the LOG.
-- Micro claim: `owner:` in the micro's goal/ frontmatter, first commit
-  wins; `status: abandoned` releases it (no locks).
-- No `--force` on shared branches; feature branches are deleted after
-  their merge (no zombies).
+- Micro claim: write `owner: <agent-id>` in the micro's goal/ frontmatter,
+  commit it on your `dev-ai-<agent>` and PUSH — a claim exists only once
+  published to origin. Before implementing, `git fetch` and check
+  `origin/dev-ai`, every `origin/dev-ai-*`, and open PRs for another owner
+  of the same micro. Two published claims collide: the earlier claim
+  commit (committer date on origin) wins; the loser marks
+  `status: abandoned` and stops before implementing. `status: abandoned`
+  releases a claim (no locks).
+- No `--force` on shared branches.
 
 ```markdown
 
 This repo's units, ADRs and skills are indexed in CATALOG.md and ADR-CATALOG.md. Consult them; do not duplicate them here.
 
 ```
+
+## 9. Agent branch and Git identity
+
+`.context/agent-branches` is the authoritative mapping of agent ID, Git
+name/email, and its one work branch. Each agent stays on its row's exact
+branch for all work and commits. The pre-commit and pre-merge-commit hooks
+block a mapped identity on another branch and unknown identities on a
+reserved agent branch. For this repository, `dev-ai-codex` maps to
+`ai-codex <dev-ai-codex@nanerr.local>` and `dev-ai-zcode` maps to
+`ai-zcode <dev-ai-zcode@nanerr.local>`; the Git name is the short agent name,
+while the email contains the full branch name.
+
+Set identity per linked worktree with `git config --worktree`. Never use
+`--global` or shared repository-local identity to configure an agent.
+Agent branches open PRs to `dev-ai`; the authoring agent does not review its
+own PR. Another agent or a human performs the independent review. Use normal
+Git commands so both hooks run; server-side branch rules are needed when
+protection against intentional hook bypass is required.

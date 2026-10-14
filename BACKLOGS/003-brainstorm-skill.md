@@ -12,7 +12,7 @@ source: user request (LOG 017)
 Give the system a first-contact skill: a project with zero artifacts gets
 an interactive session that produces the two founding artifacts — the
 vision doc (IDEA.md, optional per ADR-0013) and the goal/ tree (the
-authoritative objectives home, ADR-0012) — instead of an agent inventing
+authoritative objectives home, ADR-0015) — instead of an agent inventing
 objectives silently.
 
 ## The flow the user described

@@ -5,18 +5,20 @@
 # the human why (because:). Targets without the file are unaffected.
 set -euo pipefail
 
+HOOK_DIR="$(cd "$(dirname "$0")" && pwd)"
+"$HOOK_DIR/check-agent-branch.sh"
+
 TOUCHED=".context/touched"
 PENDING=".context/pending-human.md"
 STAGED=$(git diff --cached --name-only)
-
-[ -z "$STAGED" ] && exit 0
 
 WHY_OK=0
 if [ -f "$PENDING" ] && grep -Eq '^because: .+' "$PENDING"; then
   WHY_OK=1   # -E: in BRE '+' is literal (bug found in 1st dogfood)
 fi
 
-# ADR-0014: protected branches (opt-in file)
+# ADR-0014: protected branches (opt-in file). Runs BEFORE the empty-index
+# exit so `git commit --allow-empty` on a protected branch is gated too.
 if [ -f ".context/protected-branches" ] && [ "$WHY_OK" -ne 1 ]; then
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
   if grep -qx "$BRANCH" .context/protected-branches; then
@@ -26,6 +28,8 @@ if [ -f ".context/protected-branches" ] && [ "$WHY_OK" -ne 1 ]; then
     exit 1
   fi
 fi
+
+[ -z "$STAGED" ] && exit 0
 
 if [ -f "$TOUCHED" ]; then
   # LC_ALL=C: comm compares in byte order; locale sort diverges from it

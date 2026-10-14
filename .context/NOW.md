@@ -1,29 +1,31 @@
 # NOW
-objective: implement BACKLOGS/002 remainder (multiagent flow)
-stage: done (LOG 019)
-step: branch gate live, claim mechanism dogfooded, AGENTS §8 — awaiting cross-verification
-status: done
+objective: resolve LOG 023 review findings and integrate dev-ai
+stage: fixes applied on dev-ai-zcode (merge of origin/dev-ai in progress)
+step: run installer + identity suites, push, request independent re-review
+status: in-progress
 
 ## Current understanding
-Multiagent flow complete: topology (since LOG 008) + deterministic
-branch gate (ADR-0014). .context/protected-branches (opt-in) makes the
-hook block direct commits on dev-ai/main without the human why; merges
-skip pre-commit by git design (verified path). Claim via owner: in
-micro frontmatter, first-commit-wins. Target projects unaffected (no
-file planted). Live evidence: dev-ai blocked an agent commit (LOG 019).
-
-## Immediate next step (active micro path)
-goal/004-multiagent-flow/ — all 4 micros done. Next: cross-verification
-queue (LOG 015–019) for promotion to dev-ai; then BACKLOGS/003
-(brainstorm skill) or audit findings 1–2.
+All six LOG 023 findings fixed in the merge resolution: ADR goal-folder
+renumbered 0012→0015 (catalog notes pre-merge LOG refs); pre-commit branch
+gate moved before the empty-index exit (empty commits on protected branches
+now blocked); installer merge test creates a real two-parent merge; AGENTS.md
+reconciled with the integrated identity contract (dedicated worktree resume
+rule, no agent identity on feature branches, published-claim protocol with
+tie-break and loser-stop); goal/004 micros dogfood owner: frontmatter.
 
 ## Decisions that change the future
-- Direct commits on dev-ai/main (meta-repo) require because: — the
-  human's field; agent commits go via dev-ai-<agent> only
-- because-abuse on protected branches is a containment accepted and
-  auditable pattern (ADR-0014)
-- Installer suite now 24 asserts; whitelist untouched (targets get no
-  protected-branches file)
+- ADR-0015 (goal/) is the renumbered ex-0012; base ADR-0012 is agent
+  branch identity. LOG entries stay append-only (refs disambiguated in
+  ADR-CATALOG).
+- A micro claim counts only once pushed to origin; competing claims resolve
+  by earlier published claim commit; loser marks status: abandoned.
+- Agents commit only on their mapped dev-ai-<agent> branch; feature/<slug>
+  branches never carry a mapped agent identity.
+
+## Immediate next step
+Run `bash installer/test-install.sh` (expect ALL GREEN incl. new empty-commit
+and two-parent-merge asserts), push dev-ai-zcode, open PR to dev-ai for the
+independent re-review LOG 023 requires.
 
 ## Blockers
 —

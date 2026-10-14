@@ -1,4 +1,5 @@
 ---
+owner: zcode
 status: done
 ---
 # 003 — AGENTS.md amendment

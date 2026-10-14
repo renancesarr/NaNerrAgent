@@ -24,7 +24,7 @@ The rework of a boundary moved mid-way is the cost this skill avoids.
 The spec of a micro lives in its goal/ file. The LOG records transitions
 and pointers; the NOW points at the active micro's path. Specs evolve
 (criteria checked, adjustments) — that is why they live in goal/, not in
-the append-only LOG (ADR-0012).
+the append-only LOG (ADR-0015).
 
 ## Single home for objectives (ADR-0013)
 Objectives are minted ONLY into goal/. A vision doc (IDEA.md, README) is
@@ -35,7 +35,7 @@ objectives exist, goals are the authority.
 
 ## Structure
 - **goal** — the persistent objective (was "checkpoint"; renamed by
-  ADR-0012): a folder `goal/NNN-slug/` with GOAL.md. Survives sessions.
+  ADR-0015): a folder `goal/NNN-slug/` with GOAL.md. Survives sessions.
 - **macro** — component of a goal (1–2 weeks). OPTIONAL: a single-
   component goal puts its micros directly under the goal folder; create
   `macro/NNN-slug/MACRO-GOAL.md` only when the goal has multiple
@@ -112,7 +112,7 @@ objective test: [how a QA would validate THIS micro — command/observation]
 | "I'll decompose as I go" | A boundary moved mid-way re-costs everything that already touched it. The full map exists to see dependencies BEFORE. |
 | "Specs are bureaucracy" | The spec is the QA gate's contract. Without it, whoever fixes defines what "passed" means. |
 | "I'll detail every spec now" | A detailed spec for a distant micro is planning fiction. Full map, just-in-time detail. |
-| "Every goal needs macros" | Macro is optional by design (ADR-0012). Naming a single component is ceremony. |
+| "Every goal needs macros" | Macro is optional by design (ADR-0015). Naming a single component is ceremony. |
 
 ## Verification
 - [ ] Every micro in the map has: name, dependency, objective test (even as draft).

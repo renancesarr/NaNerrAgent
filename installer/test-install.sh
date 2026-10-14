@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Installer's objective test: real temporary target, zeroed-skeleton
-# asserts and the target's first commit flowing through the gate.
+# Installer's objective test: real temporary targets, zeroed-skeleton
+# asserts, first commit, and agent branch/identity enforcement.
 # Executable evidence (verify-objective) — meta-repo LOG 010/013.
 # Note BACKLOGS/002: written by the implementer; merging to dev-ai
 # requires cross-verification by another agent — this script is its input.
@@ -23,6 +23,9 @@ mkdir -p "$TMP/proj"
 
 check "AGENTS.md copied"               test -f "$TMP/proj/AGENTS.md"
 check "hook executable"                test -x "$TMP/proj/hooks/pre-commit"
+check "branch guard executable"        test -x "$TMP/proj/hooks/check-agent-branch.sh"
+check "merge hook executable"          test -x "$TMP/proj/hooks/pre-merge-commit"
+check "agent map remains meta-only"    test ! -e "$TMP/proj/.context/agent-branches"
 check "CATALOG zeroed (no units)"      bash -c "! grep -q '^| ' '$TMP/proj/CATALOG.md' | grep -v Unidade; true; [ \$(grep -c '^| ' '$TMP/proj/CATALOG.md') -le 1 ]"
 check "ADR-CATALOG zeroed (no ADRs)"   bash -c "[ \$(grep -c '^| ' '$TMP/proj/ADR-CATALOG.md') -le 1 ]"
 check "no DELTA_VERSION in target"     test ! -e "$TMP/proj/DELTA_VERSION.md"
@@ -97,15 +100,135 @@ if git -C "$TMP/proj3" commit -m "protected: should block without why" >/dev/nul
 else
   ok "protected branch blocks without why"
 fi
+if git -C "$TMP/proj3" commit --allow-empty -m "protected: empty commit blocked too" >/dev/null 2>&1; then
+  fail_ "protected branch blocks empty commit without why"
+else
+  ok "protected branch blocks empty commit without why"
+fi
 printf 'because: human release\nconcept: x\n' > "$TMP/proj3/.context/pending-human.md"
 if git -C "$TMP/proj3" commit -m "protected: passes with why" >/dev/null 2>&1; then
   ok "protected branch passes with why"
 else
   fail_ "protected branch passes with why"
 fi
-git -C "$TMP/proj3" merge --no-ff -m "merge: skips pre-commit" HEAD~2 >/dev/null 2>&1 \
-  && ok "merge commit works on protected branch" \
-  || fail_ "merge commit works on protected branch"
+# real merge: branch with its own commit merged back into protected main
+printf 'because:\nconcept:\n' > "$TMP/proj3/.context/pending-human.md"
+git -C "$TMP/proj3" switch -c feature-merge >/dev/null 2>&1
+echo "test3" > "$TMP/proj3/flow3.txt"
+git -C "$TMP/proj3" add flow3.txt
+printf 'flow3.txt\n.context/touched\n' > "$TMP/proj3/.context/touched"
+git -C "$TMP/proj3" commit -m "feature: own commit" >/dev/null 2>&1
+git -C "$TMP/proj3" switch main >/dev/null 2>&1
+git -C "$TMP/proj3" merge --no-ff -m "merge: skips pre-commit" feature-merge >/dev/null 2>&1
+PARENTS=$(git -C "$TMP/proj3" rev-list --parents -n 1 HEAD | wc -w)
+if [ "$PARENTS" -eq 3 ]; then
+  ok "real merge commit (two parents) works on protected branch"
+else
+  fail_ "real merge commit (two parents) works on protected branch"
+fi
+
+# agent branch lock: targets get the helper but not the meta-repository map
+mkdir -p "$TMP/agent-lock"
+"$META/installer/install.sh" "$TMP/agent-lock" >/dev/null
+git -C "$TMP/agent-lock" config user.name "Test Author"
+git -C "$TMP/agent-lock" config user.email "test@example.invalid"
+git -C "$TMP/agent-lock" add -A
+git -C "$TMP/agent-lock" commit -m "bootstrap" >/dev/null 2>&1
+git -C "$TMP/agent-lock" switch -c dev-ai-codex >/dev/null
+cat > "$TMP/agent-lock/.context/agent-branches" <<'MAP'
+# agent-id|git-name|git-email|branch
+ai-codex|ai-codex|dev-ai-codex@nanerr.local|dev-ai-codex
+ai-zcode|ai-zcode|dev-ai-zcode@nanerr.local|dev-ai-zcode
+MAP
+printf '%s\n' '.context/agent-branches' '.context/touched' >> "$TMP/agent-lock/.context/touched"
+LC_ALL=C sort -u "$TMP/agent-lock/.context/touched" -o "$TMP/agent-lock/.context/touched"
+git -C "$TMP/agent-lock" config user.name "ai-codex"
+git -C "$TMP/agent-lock" config user.email "dev-ai-codex@nanerr.local"
+git -C "$TMP/agent-lock" config agent.id "ai-zcode"
+if git -C "$TMP/agent-lock" commit --allow-empty -m "wrong agent id" >/dev/null 2>&1; then
+  fail_ "mapped agent with wrong id is blocked"
+else
+  ok "mapped agent with wrong id is blocked"
+fi
+git -C "$TMP/agent-lock" config agent.id "ai-codex"
+git -C "$TMP/agent-lock" add .context/agent-branches .context/touched
+if git -C "$TMP/agent-lock" commit -m "configure agent map" >/dev/null 2>&1; then
+  ok "ai-codex with full branch email passes on dev-ai-codex"
+else
+  fail_ "ai-codex with full branch email passes on dev-ai-codex"
+fi
+
+git -C "$TMP/agent-lock" switch -c dev-ai-zcode >/dev/null
+if git -C "$TMP/agent-lock" commit --allow-empty -m "wrong Codex branch" >/dev/null 2>&1; then
+  fail_ "Codex identity blocked on dev-ai-zcode"
+else
+  ok "Codex identity blocked on dev-ai-zcode"
+fi
+git -C "$TMP/agent-lock" switch dev-ai-codex >/dev/null
+git -C "$TMP/agent-lock" config user.name "wrong-name"
+if git -C "$TMP/agent-lock" commit --allow-empty -m "wrong name" >/dev/null 2>&1; then
+  fail_ "mapped agent with wrong name is blocked"
+else
+  ok "mapped agent with wrong name is blocked"
+fi
+git -C "$TMP/agent-lock" config user.name "ai-codex"
+git -C "$TMP/agent-lock" config user.email "wrong@nanerr.local"
+if git -C "$TMP/agent-lock" commit --allow-empty -m "wrong email" >/dev/null 2>&1; then
+  fail_ "mapped agent with wrong email is blocked"
+else
+  ok "mapped agent with wrong email is blocked"
+fi
+git -C "$TMP/agent-lock" config --unset agent.id
+git -C "$TMP/agent-lock" config user.name "Unknown Agent"
+git -C "$TMP/agent-lock" config user.email "unknown@nanerr.local"
+if git -C "$TMP/agent-lock" commit --allow-empty -m "unknown identity" >/dev/null 2>&1; then
+  fail_ "unknown identity blocked on reserved branch"
+else
+  ok "unknown identity blocked on reserved branch"
+fi
+git -C "$TMP/agent-lock" config user.name "ai-codex"
+git -C "$TMP/agent-lock" config user.email "dev-ai-codex@nanerr.local"
+git -C "$TMP/agent-lock" config agent.id "ai-codex"
+git -C "$TMP/agent-lock" checkout --detach HEAD >/dev/null 2>&1
+if git -C "$TMP/agent-lock" commit --allow-empty -m "detached identity" >/dev/null 2>&1; then
+  fail_ "detached agent HEAD is blocked"
+else
+  ok "detached agent HEAD is blocked"
+fi
+git -C "$TMP/agent-lock" checkout dev-ai-zcode >/dev/null
+git -C "$TMP/agent-lock" config user.name "ai-zcode"
+git -C "$TMP/agent-lock" config user.email "dev-ai-zcode@nanerr.local"
+git -C "$TMP/agent-lock" config agent.id "ai-zcode"
+if git -C "$TMP/agent-lock" commit --allow-empty -m "ZCode identity" >/dev/null 2>&1; then
+  ok "ai-zcode with full branch email passes on dev-ai-zcode"
+else
+  fail_ "ai-zcode with full branch email passes on dev-ai-zcode"
+fi
+
+# A Merge commit is checked by pre-merge-commit, which keeps the normal
+# staged/touched gate out of merged trees.
+git -C "$TMP/agent-lock" config --unset agent.id
+git -C "$TMP/agent-lock" config user.name "Test Author"
+git -C "$TMP/agent-lock" config user.email "test@example.invalid"
+git -C "$TMP/agent-lock" switch -c incoming >/dev/null
+printf '%s\n' 'merge test' > "$TMP/agent-lock/incoming.txt"
+printf '%s\n' 'incoming.txt' '.context/touched' >> "$TMP/agent-lock/.context/touched"
+LC_ALL=C sort -u "$TMP/agent-lock/.context/touched" -o "$TMP/agent-lock/.context/touched"
+git -C "$TMP/agent-lock" add incoming.txt .context/touched
+if git -C "$TMP/agent-lock" commit -m "incoming change" >/dev/null 2>&1; then
+  ok "unmapped author can commit on an unreserved branch"
+else
+  fail_ "unmapped author can commit on an unreserved branch"
+fi
+git -C "$TMP/agent-lock" switch dev-ai-codex >/dev/null
+git -C "$TMP/agent-lock" config user.name "Unknown Agent"
+git -C "$TMP/agent-lock" config user.email "unknown@nanerr.local"
+if git -C "$TMP/agent-lock" merge --no-ff --no-edit incoming >/dev/null 2>&1; then
+  fail_ "unknown identity blocked from merge commit on reserved branch"
+else
+  ok "unknown identity blocked from merge commit on reserved branch"
+  git -C "$TMP/agent-lock" merge --abort >/dev/null 2>&1 || true
+fi
 
 echo "---"
 if [ "$FAILS" -eq 0 ]; then

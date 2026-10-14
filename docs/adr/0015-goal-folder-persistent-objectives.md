@@ -1,5 +1,5 @@
 ---
-id: 0012
+id: 0015
 status: accepted
 supersedes: —
 units: [goal/, skills/agents-skills/decompose, skills/agents-skills/implement, skills/agents-skills/verify-objective, CATALOG.md]

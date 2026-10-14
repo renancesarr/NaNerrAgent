@@ -17,7 +17,7 @@ mandatory; when objectives exist, focus on goals.
 - Both mandatory (vision doc + goals): rejected — duplicated objective
   lists violate DRY; every status change would need two edits.
 - Vision doc as the only objective home: rejected — no mutable status,
-  no addressable micros (that was PLAN.md's failure, ADR-0012).
+  no addressable micros (that was PLAN.md's failure, ADR-0015).
 - Goals mandatory in every repo: rejected — a repo with no persistent
   objectives carries an empty tree (YAGNI).
 
