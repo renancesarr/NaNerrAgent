@@ -1,6 +1,6 @@
 # NOW
 objective: resolve LOG 023 review findings and integrate dev-ai
-stage: fixes applied on dev-ai-zcode (merge of origin/dev-ai in progress)
+stage: fixes committed (merge a38259a + LOG 024); suites green
 step: run installer + identity suites, push, request independent re-review
 status: in-progress
 

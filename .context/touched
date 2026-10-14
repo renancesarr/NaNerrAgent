@@ -8,6 +8,7 @@ CATALOG.md
 .context/log/021-agent-branch-lock.md
 .context/log/022-agent-identity-contract-refinement.md
 .context/log/023-review-dev-ai-zcode.md
+.context/log/024-review-fixes-integration.md
 .context/NOW.md
 .context/touched
 docs/adr/0012-agent-branch-identity.md
