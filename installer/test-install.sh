@@ -81,6 +81,57 @@ else
   fail_ "gate passes with because filled"
 fi
 
+# ADR-0014 branch gate: opt-in via .context/protected-branches
+printf 'because:\nconcept:\n' > "$TMP/proj3/.context/pending-human.md"
+echo "test" > "$TMP/proj3/flow.txt"
+git -C "$TMP/proj3" add flow.txt
+printf 'flow.txt\n.context/touched\n' > "$TMP/proj3/.context/touched"
+if git -C "$TMP/proj3" commit -m "unprotected branch: agent flow passes" >/dev/null 2>&1; then
+  ok "unprotected branch: agent flow passes"
+else
+  fail_ "unprotected branch: agent flow passes"
+fi
+printf 'main\n' > "$TMP/proj3/.context/protected-branches"
+echo "test2" > "$TMP/proj3/flow2.txt"
+git -C "$TMP/proj3" add flow2.txt
+printf 'flow2.txt\n.context/touched\n.context/protected-branches\n' > "$TMP/proj3/.context/touched"
+if git -C "$TMP/proj3" commit -m "protected: should block without why" >/dev/null 2>&1; then
+  fail_ "protected branch blocks without why"
+else
+  ok "protected branch blocks without why"
+fi
+# empty-commit regression: unstage first so the early-exit path is what runs
+git -C "$TMP/proj3" restore --staged flow2.txt >/dev/null 2>&1
+STAGED_COUNT=$(git -C "$TMP/proj3" diff --cached --name-only | wc -l | tr -d ' ')
+HEAD_BEFORE=$(git -C "$TMP/proj3" rev-parse HEAD)
+if [ "$STAGED_COUNT" -eq 0 ] && ! git -C "$TMP/proj3" commit --allow-empty -m "protected: empty commit blocked too" >/dev/null 2>&1 \
+   && [ "$(git -C "$TMP/proj3" rev-parse HEAD)" = "$HEAD_BEFORE" ]; then
+  ok "protected branch blocks empty commit without why (empty index, HEAD unchanged)"
+else
+  fail_ "protected branch blocks empty commit without why (empty index, HEAD unchanged)"
+fi
+git -C "$TMP/proj3" add flow2.txt
+printf 'because: human release\nconcept: x\n' > "$TMP/proj3/.context/pending-human.md"
+if git -C "$TMP/proj3" commit -m "protected: passes with why" >/dev/null 2>&1; then
+  ok "protected branch passes with why"
+else
+  fail_ "protected branch passes with why"
+fi
+# real merge: branch with its own commit merged back into protected main
+printf 'because:\nconcept:\n' > "$TMP/proj3/.context/pending-human.md"
+git -C "$TMP/proj3" switch -c feature-merge >/dev/null 2>&1
+echo "test3" > "$TMP/proj3/flow3.txt"
+git -C "$TMP/proj3" add flow3.txt
+printf 'flow3.txt\n.context/touched\n' > "$TMP/proj3/.context/touched"
+git -C "$TMP/proj3" commit -m "feature: own commit" >/dev/null 2>&1
+git -C "$TMP/proj3" switch main >/dev/null 2>&1
+git -C "$TMP/proj3" merge --no-ff -m "merge: skips pre-commit" feature-merge >/dev/null 2>&1
+PARENTS=$(git -C "$TMP/proj3" rev-list --parents -n 1 HEAD | wc -w)
+if [ "$PARENTS" -eq 3 ]; then
+  ok "real merge commit (two parents) works on protected branch"
+else
+  fail_ "real merge commit (two parents) works on protected branch"
+fi
 
 # agent branch lock: targets get the helper but not the meta-repository map
 mkdir -p "$TMP/agent-lock"
@@ -160,7 +211,7 @@ else
   fail_ "ai-zcode with full branch email passes on dev-ai-zcode"
 fi
 
-# A merge commit is checked by pre-merge-commit, which keeps the normal
+# A Merge commit is checked by pre-merge-commit, which keeps the normal
 # staged/touched gate out of merged trees.
 git -C "$TMP/agent-lock" config --unset agent.id
 git -C "$TMP/agent-lock" config user.name "Test Author"

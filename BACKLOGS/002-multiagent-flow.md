@@ -1,6 +1,6 @@
 ---
 id: 002
-status: backlog
+status: implemented
 type: future-implementation
 target-units: [hooks/pre-commit, .context/, BACKLOGS/001-goal-structure.md, skills/agents-skills/verify-objective, skills/agents-skills/decompose]
 created: 2026-10-08

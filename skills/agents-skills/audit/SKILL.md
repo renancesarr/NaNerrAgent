@@ -48,8 +48,9 @@ expensive, and cheap precisely because it's on demand.
 5. **contencao:** age + trigger already hit and not migrated.
 6. **stale pending-human**: existing for more than one session = cold
    starts skipping AGENTS.md §1 — the system's worst silent hole.
-7. **PLAN**: `done` written by non-gate · eternal `pending-verification`
-   (the human never reported — the debt stays open forever).
+7. **goal/**: micro `done` written by non-gate (implement attests nothing)
+   · eternal `pending-verification` (the human never reported — the debt
+   stays open forever) · GOAL.md over its 100-line ceiling.
 8. **Gate bypass**: commit with files outside `touched` and no pending =
    `--no-verify`. The gate was circumvented; the evidence stays in history.
 

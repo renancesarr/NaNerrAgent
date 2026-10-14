@@ -3,7 +3,7 @@ name: capture-human
 description: >
   Converts out-of-flow human edits into knowledge: reads the why and the
   concept from .context/pending-human.md, generates the "how" from the real
-  diff, records it in the LOG, reconciles NOW/PLAN/ADRs/docs. Runs at cold
+  diff, records it in the LOG, reconciles NOW/goal/ADRs/docs. Runs at cold
   start of every session with a filled pending — before any task, because
   the edit may invalidate state. Does not run when pending is empty (the
   gate enforces obligation).
@@ -25,7 +25,7 @@ deferred to the agent session, where there's time and context.
 
 ## Cold start protocol (AGENTS.md §1)
 Is there a pending with `because:` filled? Run before ANY task.
-The edit may invalidate the NOW, the PLAN, an ADR, a unit doc — that is
+The edit may invalidate the NOW, a goal/ spec, an ADR, a unit doc — that is
 why capture-human is the exception to the session-start rule:
 **the pending is read at cold start even though it is "just" state**.
 No pending → normal cold start (NOW + LOG) proceeds.
@@ -67,7 +67,7 @@ doc impact: [none | see catalog]
 | Action | When | Owning skill |
 |---|---|---|
 | NOW rewritten | the edit changes the next step | here |
-| PLAN adjusted | the edit resolves/breaks a micro | here |
+| goal/ adjusted | the edit resolves/breaks a micro (status or spec) | here |
 | ADR amended or superseded | the edit contradicts a decision | `model-domain` |
 | Unit doc rewritten | the edit changes the contract | `catalog` |
 | CATALOG updated | unit created/removed | `catalog` |
@@ -101,7 +101,7 @@ by its promotion test — not decided here.
 ## Verification
 - [ ] LOG entry with because/concept verbatim + labeled how.
 - [ ] Real diff obtained and confronted with the pending (non-empty handshake).
-- [ ] Cascade evaluated: NOW/PLAN/ADR/doc/CATALOG — impact recorded for each.
+- [ ] Cascade evaluated: NOW/goal/ADR/doc/CATALOG — impact recorded for each.
 - [ ] Pending and touched cleaned after capture.
 - [ ] Fast path executed when the human didn't know the why.
 - [ ] Every cascade action triggered the owning skill — nothing executed "for convenience's scope".

@@ -26,6 +26,10 @@ Nothing important lives only in your session memory.
    and real artifacts. Divergence? Re-validate the step; never resume blind.
    No divergence? Execute the "immediate next step".
 4. Nothing exists → every new task starts at `contain` (classification, §4).
+5. A session that already sits on this agent's own branch/worktree (rule 1)
+   resumes there — never `checkout` away from it, even to reach
+   `dev-ai-<this-agent>`; uncommitted work travels with whoever owns the tree.
+   Agents never share a working tree — that's how LOG 007's collision happened.
 
 ## 2. Engineering laws
 
@@ -113,13 +117,38 @@ failed. Go back one step; don't write a bigger NOW.
   `because` alone suffices. `capture-human` expands the pending into a
   full LOG entry in the next session.
 
+## 8. Multi-agent flow (ADR-0014)
+
+- Topology: `main` (stable, promoted by the HUMAN) ← `dev-ai`
+  (integration) ← `dev-ai-<agent>` per agent.
+- Agents commit ONLY on their exact `dev-ai-<agent>` branch — the row's
+  branch in `.context/agent-branches` (ADR-0012/§9). The mapped identity
+  is blocked anywhere else by the hooks, so no `feature/<slug>` branches
+  carry an agent identity; work happens on the agent branch itself.
+- `.context/protected-branches` (opt-in, one branch per line) makes the
+  hook block direct commits on listed branches without the human why —
+  including `--allow-empty` commits (the gate runs before any early exit).
+- Merge to `dev-ai` requires verifier ≠ implementer (the objective test
+  run by another agent — or the human, as in LOG 014). Merges skip the
+  pre-commit hook by git design; the record lives in the LOG.
+- Micro claim: write `owner: <agent-id>` in the micro's goal/ frontmatter,
+  commit it on your `dev-ai-<agent>` and PUSH — a claim exists only once
+  published to origin. Before implementing, `git fetch` and check
+  `origin/dev-ai`, every `origin/dev-ai-*`, and open PRs for another owner
+  of the same micro. Two published claims collide: the claim commit that
+  sorts first under (committer date on origin, then commit hash —
+  lexicographic) wins; that pair is a total order, so a same-second tie
+  still resolves. The loser marks `status: abandoned` and stops before
+  implementing. `status: abandoned` releases a claim (no locks).
+- No `--force` on shared branches.
+
 ```markdown
 
 This repo's units, ADRs and skills are indexed in CATALOG.md and ADR-CATALOG.md. Consult them; do not duplicate them here.
 
 ```
 
-## 8. Agent branch and Git identity
+## 9. Agent branch and Git identity
 
 `.context/agent-branches` is the authoritative mapping of agent ID, Git
 name/email, and its one work branch. Each agent stays on its row's exact
