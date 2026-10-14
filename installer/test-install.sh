@@ -100,11 +100,17 @@ if git -C "$TMP/proj3" commit -m "protected: should block without why" >/dev/nul
 else
   ok "protected branch blocks without why"
 fi
-if git -C "$TMP/proj3" commit --allow-empty -m "protected: empty commit blocked too" >/dev/null 2>&1; then
-  fail_ "protected branch blocks empty commit without why"
+# empty-commit regression: unstage first so the early-exit path is what runs
+git -C "$TMP/proj3" restore --staged flow2.txt >/dev/null 2>&1
+STAGED_COUNT=$(git -C "$TMP/proj3" diff --cached --name-only | wc -l | tr -d ' ')
+HEAD_BEFORE=$(git -C "$TMP/proj3" rev-parse HEAD)
+if [ "$STAGED_COUNT" -eq 0 ] && ! git -C "$TMP/proj3" commit --allow-empty -m "protected: empty commit blocked too" >/dev/null 2>&1 \
+   && [ "$(git -C "$TMP/proj3" rev-parse HEAD)" = "$HEAD_BEFORE" ]; then
+  ok "protected branch blocks empty commit without why (empty index, HEAD unchanged)"
 else
-  ok "protected branch blocks empty commit without why"
+  fail_ "protected branch blocks empty commit without why (empty index, HEAD unchanged)"
 fi
+git -C "$TMP/proj3" add flow2.txt
 printf 'because: human release\nconcept: x\n' > "$TMP/proj3/.context/pending-human.md"
 if git -C "$TMP/proj3" commit -m "protected: passes with why" >/dev/null 2>&1; then
   ok "protected branch passes with why"

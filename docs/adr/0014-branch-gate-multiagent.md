@@ -30,9 +30,10 @@ human keeps the release gate (because: = the human's explicit why);
 merges skip pre-commit by git design — the verified path stays open;
 the claim (owner: in micro frontmatter) coordinates agents without locks
 (YAGNI): a claim counts only once pushed to origin; before implementing,
-the agent re-checks origin/dev-ai* and open PRs for a competing owner,
-and on collision the earlier published claim commit wins while the loser
-marks status: abandoned and stops.
+the agent re-checks origin/dev-ai* and open PRs for a competing owner;
+on collision the claim commit that sorts first under (committer date,
+commit hash) wins — a total order, so same-second ties still resolve —
+while the loser marks status: abandoned and stops.
 We give up: the gate cannot distinguish human from agent — an agent
 filling because: on a protected branch would pass. containção: accepted;
 audit hunts it (because: is human verbatim per capture-human; a filled

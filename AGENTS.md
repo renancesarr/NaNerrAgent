@@ -135,10 +135,11 @@ failed. Go back one step; don't write a bigger NOW.
   commit it on your `dev-ai-<agent>` and PUSH — a claim exists only once
   published to origin. Before implementing, `git fetch` and check
   `origin/dev-ai`, every `origin/dev-ai-*`, and open PRs for another owner
-  of the same micro. Two published claims collide: the earlier claim
-  commit (committer date on origin) wins; the loser marks
-  `status: abandoned` and stops before implementing. `status: abandoned`
-  releases a claim (no locks).
+  of the same micro. Two published claims collide: the claim commit that
+  sorts first under (committer date on origin, then commit hash —
+  lexicographic) wins; that pair is a total order, so a same-second tie
+  still resolves. The loser marks `status: abandoned` and stops before
+  implementing. `status: abandoned` releases a claim (no locks).
 - No `--force` on shared branches.
 
 ```markdown
